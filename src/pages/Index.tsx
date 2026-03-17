@@ -1,16 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Moon, Sun, Stars, PenLine, Sparkles, FolderOpen } from 'lucide-react';
+import { PenLine, Sparkles, FolderOpen } from 'lucide-react';
 import Footer from '@/components/Footer';
 
 const Index = () => {
-  const [isDark, setIsDark] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-  }, [isDark]);
 
   const features = [
     {
@@ -35,42 +30,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen relative">
-      {/* Floating decorations */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-20 left-8 w-12 h-12 rounded-full border-2 border-primary/20 opacity-50" />
-        <div className="absolute top-40 right-16 w-8 h-8 rotate-45 border-2 border-primary/20 opacity-40" />
-        <div className="absolute bottom-40 left-16 text-primary/20 text-2xl">🐪</div>
-        <div className="absolute bottom-60 right-12 text-primary/15 text-xl">🕌</div>
-        <motion.div
-          animate={{ y: [0, -10, 0] }}
-          transition={{ duration: 4, repeat: Infinity }}
-          className="absolute top-28 right-1/4 text-primary/20"
-        >
-          ☆
-        </motion.div>
-      </div>
-
-      {/* Nav */}
-      <nav className="sticky top-0 z-50 w-full backdrop-blur-md border-b border-border/50 px-4 py-3 md:px-8">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <span className="text-primary text-xl">🐪</span>
-            <h1 className="text-xl font-bold tracking-tight font-display text-foreground">
-              Eid<span className="text-primary">Greetings</span>
-            </h1>
-          </div>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setIsDark(!isDark)}
-            className="p-2 rounded-lg border border-border bg-card shadow-sm"
-            aria-label="Toggle theme"
-          >
-            {isDark ? <Sun size={18} className="text-primary" /> : <Moon size={18} className="text-muted-foreground" />}
-          </motion.button>
-        </div>
-      </nav>
-
       {/* Hero */}
       <main className="relative z-10 max-w-4xl mx-auto px-4 pt-16 pb-8">
         <motion.div

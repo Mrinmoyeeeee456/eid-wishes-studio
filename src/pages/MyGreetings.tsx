@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Moon, Sun, Plus, Trash2, Share2 } from 'lucide-react';
+import { Plus, Trash2, Share2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { toPng, toJpeg } from 'html-to-image';
 import EidCard from '@/components/EidCard';
@@ -9,13 +9,8 @@ import Footer from '@/components/Footer';
 import { SavedGreeting, loadGreetings, saveGreetings } from '@/lib/greetings';
 
 const MyGreetings = () => {
-  const [isDark, setIsDark] = useState(false);
   const [greetings, setGreetings] = useState<SavedGreeting[]>(loadGreetings);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-  }, [isDark]);
 
   const handleDelete = useCallback((id: string) => {
     setGreetings((prev) => {
@@ -40,32 +35,6 @@ const MyGreetings = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Nav */}
-      <nav className="sticky top-0 z-50 w-full backdrop-blur-md border-b border-border/50 px-4 py-3 md:px-8">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition"
-            >
-              <ArrowLeft size={16} /> Back to Home
-            </button>
-            <div className="flex items-center gap-2">
-              <span className="text-primary text-lg">🐪</span>
-              <h1 className="text-lg font-bold font-display text-primary">My Greetings</h1>
-            </div>
-          </div>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setIsDark(!isDark)}
-            className="p-2 rounded-lg border border-border bg-card shadow-sm"
-          >
-            {isDark ? <Sun size={18} className="text-primary" /> : <Moon size={18} className="text-muted-foreground" />}
-          </motion.button>
-        </div>
-      </nav>
-
       <main className="max-w-5xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-display font-bold text-foreground">

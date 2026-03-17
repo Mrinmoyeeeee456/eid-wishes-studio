@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Moon, Sun, Save, Eye } from 'lucide-react';
+import { Save, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { toPng, toJpeg } from 'html-to-image';
 import EidCard from '@/components/EidCard';
@@ -19,7 +19,6 @@ const tabs = [
 const cardSizes = ['Small (300px)', 'Medium (400px)', 'Large (500px)'];
 
 const CreateGreeting = () => {
-  const [isDark, setIsDark] = useState(false);
   const [activeTab, setActiveTab] = useState('content');
   const [senderName, setSenderName] = useState('');
   const [recipientName, setRecipientName] = useState('');
@@ -27,10 +26,6 @@ const CreateGreeting = () => {
   const [cardSize, setCardSize] = useState('Medium (400px)');
   const cardRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-  }, [isDark]);
 
   const sizeKey = cardSize.includes('Small') ? 'small' : cardSize.includes('Large') ? 'large' : 'medium';
 
@@ -69,32 +64,6 @@ const CreateGreeting = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Nav */}
-      <nav className="sticky top-0 z-50 w-full backdrop-blur-md border-b border-border/50 px-4 py-3 md:px-8">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition"
-            >
-              <ArrowLeft size={16} /> Back to Home
-            </button>
-            <div className="flex items-center gap-2">
-              <span className="text-primary text-lg">🐪</span>
-              <h1 className="text-lg font-bold font-display text-primary">Create Greeting</h1>
-            </div>
-          </div>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setIsDark(!isDark)}
-            className="p-2 rounded-lg border border-border bg-card shadow-sm"
-          >
-            {isDark ? <Sun size={18} className="text-primary" /> : <Moon size={18} className="text-muted-foreground" />}
-          </motion.button>
-        </div>
-      </nav>
-
       <main className="max-w-6xl mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-2 gap-10 items-start">
           {/* Left: Form */}
