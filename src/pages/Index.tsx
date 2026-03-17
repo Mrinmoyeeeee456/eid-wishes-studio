@@ -20,7 +20,7 @@ const Index = () => {
       desc: 'Design personalized Eid greeting cards with custom messages and beautiful Islamic themes',
     },
     {
-      icon: <Sparkles className="text-amber-500" size={28} />,
+      icon: <Sparkles className="text-primary" size={28} />,
       bg: 'bg-accent',
       title: 'AI-Powered',
       desc: 'Generate personalized messages with AI in multiple languages including Arabic and Bengali',
