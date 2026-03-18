@@ -67,8 +67,7 @@ const WelcomePopup = () => {
                 <motion.span animate={{ y: [0, -8, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 1.2 }}>💖</motion.span>
                 <motion.span animate={{ y: [0, -8, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 1.6 }}>✨</motion.span>
               </div>
-
-              </div>
+            </div>
 
             {/* CTA Buttons */}
             <div className="px-8 pb-6 flex gap-3">
