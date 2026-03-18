@@ -15,8 +15,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['"Playfair Display"', 'serif'],
-        sans: ['Inter', 'sans-serif'],
+        display: ['"Playfair Display"', '"Amiri"', '"Noto Serif Bengali"', 'serif'],
+        sans: ['Inter', '"Tajawal"', '"Hind Siliguri"', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

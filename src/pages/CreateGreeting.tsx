@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Save, Eye, Printer, Download, Sparkles } from 'lucide-react';
@@ -8,7 +8,7 @@ import { useReactToPrint } from 'react-to-print';
 import Tippy from '@tippyjs/react';
 import EidCard from '@/components/EidCard';
 import Footer from '@/components/Footer';
-import { SavedGreeting, loadGreetings, saveGreetings, defaultMessage } from '@/lib/greetings';
+import { SavedGreeting, loadGreetings, saveGreetings, getDefaultMessage } from '@/lib/greetings';
 import { frameOptions, CharacterTheme } from '@/lib/frames';
 
 const tabs = [
@@ -22,47 +22,65 @@ const CreateGreeting = () => {
   const [activeTab, setActiveTab] = useState('content');
   const [senderName, setSenderName] = useState('');
   const [recipientName, setRecipientName] = useState('');
-  const [message, setMessage] = useState(defaultMessage);
+  const [message, setMessage] = useState(getDefaultMessage('fitar'));
+  const [eidType, setEidType] = useState<'fitar' | 'azha'>('fitar');
   const [cardSize, setCardSize] = useState('Medium (400px)');
   const [frameTheme, setFrameTheme] = useState<CharacterTheme>('traditional_mosque');
   
   const cardComponentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (message === getDefaultMessage('fitar') || message === getDefaultMessage('azha')) {
+      setMessage(getDefaultMessage(eidType));
+    }
+  }, [eidType, message]);
+
   const generateAIGreeting = useCallback(() => {
-    const aiMessages = [
-      "May the divine blessings of Allah bring you hope, faith, and joy on Eid and forever.",
-      "Wishing you a joyous and blessed Eid filled with prosperity, happiness, and peace.",
+    const isFitar = eidType === 'fitar';
+    const aiMessages = isFitar ? [
+      "May the divine blessings of Allah bring you hope, faith, and joy on Eid-ul-Fitr and forever.",
+      "Wishing you a joyous and blessed Eid-ul-Fitr filled with prosperity, happiness, and peace.",
       "May this beautiful occasion of Eid give you all the reasons to make your life even more beautiful. Eid Mubarak!",
-      "Sending you my warmest wishes on Eid. May Allah accept your good deeds and forgive your transgressions.",
-      "May the magic of this Eid bring lots of happiness in your life. Eid Mubarak to you and your family!",
-      "تقبل الله منا ومنكم صالح الأعمال. عيد مبارক! (May Allah accept from us and from you. Eid Mubarak!)",
-      "আমাদের পক্ষ থেকে আপনাকে ও আপনার পরিবারের সবাইকে পবিত্র ঈদুল আযহার আন্তরিক শুভেচ্ছা ও ঈদ মোবারক!",
+      "Sending you my warmest wishes on Eid. May Allah accept your fasting and forgive your transgressions.",
+      "May the magic of this Eid bring lots of happiness in your life. Ramadan Mubarak and Eid-ul-Fitr Mubarak to you and your family!",
+      "تقبل الله منا ومنكم صالح الأعمال. عيد فطر مبارك! (May Allah accept from us and from you. Eid-ul-Fitr Mubarak!)",
+      "আমাদের পক্ষ থেকে আপনাকে ও আপনার পরিবারের সবাইকে পবিত্র ঈদুল ফিতরের আন্তরিক শুভেচ্ছা ও ঈদ মোবারক!",
       "রমজান শেষে আসলো খুশির ঈদ, খুশিতে ভরে উঠুক আপনার প্রতিটি মুহূর্ত। ঈদ মোবারক!"
+    ] : [
+      "May the divine blessings of Allah bring you hope, faith, and joy on Eid-ul-Adha and forever.",
+      "Wishing you a joyous and blessed Eid-ul-Adha filled with prosperity, happiness, and peace.",
+      "May this beautiful occasion of Eid give you all the reasons to make your life even more beautiful. Eid Mubarak!",
+      "Sending you my warmest wishes on Eid. May Allah accept your sacrifices and forgive your transgressions.",
+      "May the magic of this Eid bring lots of happiness in your life. Eid-ul-Adha Mubarak to you and your family!",
+      "تقبل الله منا ومنكم صالح الأعمال. عيد أضحى مبارك! (May Allah accept from us and from you. Eid-ul-Adha Mubarak!)",
+      "আমাদের পক্ষ থেকে আপনাকে ও আপনার পরিবারের সবাইকে পবিত্র ঈদুল আযহার আন্তরিক শুভেচ্ছা ও ঈদ মোবারক!",
+      "ত্যাগের মহিমায় ভাস্বর পবিত্র ঈদুল আযহা. ঈদ মোবারক!"
     ];
     const greetingMsg = aiMessages[Math.floor(Math.random() * aiMessages.length)];
     const personalized = recipientName ? `Dearest ${recipientName}, ${greetingMsg}` : greetingMsg;
     setMessage(personalized);
     toast.success('AI drafted a new message! ✨');
-  }, [recipientName]);
+  }, [recipientName, eidType]);
 
   const sizeKey = cardSize.includes('Small') ? 'small' : cardSize.includes('Large') ? 'large' : 'medium';
 
   const handleSave = useCallback(async () => {
     const greeting: SavedGreeting = {
-      id: crypto.randomUUID(),
+      id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2) + Date.now().toString(36),
       recipientName,
       senderName,
       message,
       template: 'classic',
       frameId: frameTheme,
       cardSize: sizeKey,
+      eidType,
       createdAt: Date.now(),
     };
     const all = await loadGreetings();
     await saveGreetings([greeting, ...all]);
     toast.success('Greeting saved! 🌙');
-  }, [recipientName, senderName, message, sizeKey, frameTheme]);
+  }, [recipientName, senderName, message, sizeKey, frameTheme, eidType]);
 
   // Export functions
   const exportImage = useCallback(
@@ -141,6 +159,34 @@ const CreateGreeting = () => {
                       placeholder="Enter recipient's name"
                       className="sparkle-input w-full px-4 py-4 rounded-xl border-2 border-border bg-background text-foreground placeholder:text-muted-foreground outline-none transition-all duration-300"
                     />
+                  </div>
+                </div>
+
+                <div className="mb-2">
+                  <label className="text-sm font-medium text-primary mb-2 block">Occasion</label>
+                  <div className="flex gap-6">
+                    <label className="flex items-center gap-2 cursor-pointer font-medium hover:text-[var(--primary-festive)] transition">
+                      <input 
+                        type="radio" 
+                        name="eidType" 
+                        value="fitar" 
+                        checked={eidType === 'fitar'} 
+                        onChange={() => setEidType('fitar')}
+                        className="accent-[var(--primary-festive)] w-4 h-4"
+                      />
+                      <span>Eid-ul-Fitr</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer font-medium hover:text-[var(--primary-festive)] transition">
+                      <input 
+                        type="radio" 
+                        name="eidType" 
+                        value="azha" 
+                        checked={eidType === 'azha'} 
+                        onChange={() => setEidType('azha')}
+                        className="accent-[var(--primary-festive)] w-4 h-4"
+                      />
+                      <span>Eid-ul-Adha</span>
+                    </label>
                   </div>
                 </div>
 
@@ -273,6 +319,7 @@ const CreateGreeting = () => {
                       message={message}
                       size={sizeKey}
                       frameId={frameTheme}
+                      eidType={eidType}
                     />
                 </div>
             </div>

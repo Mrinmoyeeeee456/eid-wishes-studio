@@ -8,6 +8,7 @@ export interface SavedGreeting {
   template: string;
   frameId: string;
   cardSize: string;
+  eidType?: 'fitar' | 'azha';
   createdAt: number;
 }
 
@@ -51,6 +52,7 @@ export const loadGreetings = async (): Promise<SavedGreeting[]> => {
           template: d.template,
           frameId: d.frame_id,
           cardSize: d.card_size,
+          eidType: d.eid_type || 'fitar',
           createdAt: new Date(d.created_at).getTime(),
         }));
         // Merge: remote takes priority, supplement with local
@@ -85,6 +87,7 @@ export const saveGreetings = async (greetings: SavedGreeting[]) => {
         template: g.template,
         frame_id: g.frameId,
         card_size: g.cardSize,
+        eid_type: g.eidType || 'fitar',
       });
     }
   } catch {
@@ -108,5 +111,7 @@ export const deleteGreetingFromDb = async (id: string) => {
   }
 };
 
-export const defaultMessage =
-  'May this blessed occasion of Eid-ul-Adha bring you joy, peace, and prosperity. May Allah accept your prayers and sacrifices. Eid Mubarak!';
+export const getDefaultMessage = (type: 'fitar' | 'azha') => 
+  type === 'azha' 
+    ? 'May this blessed occasion of Eid-ul-Adha bring you joy, peace, and prosperity. May Allah accept your prayers and sacrifices. Eid Mubarak!'
+    : 'May the magic of this Eid bring lots of happiness in your life. Ramadan Mubarak and Eid-ul-Fitr Mubarak to you and your family!';

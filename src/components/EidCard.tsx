@@ -7,10 +7,11 @@ interface EidCardProps {
   message: string;
   size?: string;
   frameId?: CharacterTheme;
+  eidType?: 'fitar' | 'azha';
 }
 
 const EidCard = forwardRef<HTMLDivElement, EidCardProps>(
-  ({ recipientName, senderName, message, size = 'Medium (400px)', frameId = 'traditional_mosque' }, ref) => {
+  ({ recipientName, senderName, message, size = 'Medium (400px)', frameId = 'traditional_mosque', eidType = 'fitar' }, ref) => {
     
     // Find selected frame theme
     const theme = frameOptions.find(f => f.id === frameId) || frameOptions[0];
@@ -49,7 +50,10 @@ const EidCard = forwardRef<HTMLDivElement, EidCardProps>(
                 EID MUBARAK
               </h3>
               <p className={`font-display text-xl opacity-80 italic ${theme.colors.text}`}>
-                عيد مبارك
+                {eidType === 'azha' ? 'عيد أضحى مبارك' : 'عيد فطر مبارك'}
+              </p>
+              <p className={`text-xs font-medium uppercase tracking-widest opacity-60 pt-1 ${theme.colors.text}`}>
+                {eidType === 'azha' ? 'Celebrating Eid-ul-Adha' : 'Celebrating Eid-ul-Fitr'}
               </p>
             </div>
 
@@ -63,8 +67,8 @@ const EidCard = forwardRef<HTMLDivElement, EidCardProps>(
               </div>
 
               {/* Message Box always maintains a strong glassy effect */}
-              <div className={`rounded-xl p-5 border-2 border-dashed ${theme.colors.border} bg-white/70 dark:bg-black/50 backdrop-blur-lg shadow-sm shine-spiritual`}>
-                <p className={`text-sm md:text-base leading-relaxed ${theme.colors.text} whitespace-pre-wrap min-h-[80px] font-medium`}>
+              <div className={`rounded-xl p-5 border-2 border-dashed ${theme.colors.border} bg-white/80 dark:bg-black/50 backdrop-blur-lg shadow-sm shine-spiritual`}>
+                <p className={`text-sm md:text-base leading-relaxed text-gray-900 dark:text-gray-100 print:text-black whitespace-pre-wrap min-h-[80px] font-bold`}>
                   {message || 'May this blessed occasion of Eid bring you joy, peace, and prosperity. May you have a wonderful celebration with your loved ones!'}
                 </p>
               </div>
