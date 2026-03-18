@@ -150,7 +150,10 @@ const StarField = () => {
           </div>
 
           <div className="absolute top-1/3 left-1/4 w-4 h-4 rounded-full bg-white shadow-[0_0_20px_white] opacity-60 animate-pulse" />
-          <div className="absolute bottom-1/3 right-1/3 w-6 h-6 rounded-full bg-amber-200 shadow-[0_0_25px_rgba(251,191,36,0.5)] opacity-50 animate-bounce transition-all duration-[5000ms]" />
+          <div 
+            className="absolute bottom-1/3 right-1/3 w-6 h-6 rounded-full bg-amber-200 shadow-[0_0_25px_rgba(251,191,36,0.5)] opacity-50 animate-bounce transition-all" 
+            style={{ animationDuration: '5s', transitionDuration: '5s' }}
+          />
         </>
       )}
     </div>
