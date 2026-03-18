@@ -68,10 +68,7 @@ const WelcomePopup = () => {
                 <motion.span animate={{ y: [0, -8, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 1.6 }}>✨</motion.span>
               </div>
 
-              <p className="text-[11px] text-stone-400 mt-3 italic">
-                🎵 Ramadan music is playing — click the 🔊 icon to mute
-              </p>
-            </div>
+              </div>
 
             {/* CTA Buttons */}
             <div className="px-8 pb-6 flex gap-3">

@@ -9,7 +9,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useThemeStore } from "./store/themeStore";
 import { useSunriseEffect } from "./hooks/useSunriseEffect";
 import AppBar from "./components/AppBar";
-import BackgroundMusic from "./components/BackgroundMusic";
 import WelcomePopup from "./components/WelcomePopup";
 import StarField from "./components/StarField";
 import Index from "./pages/Index";
@@ -51,7 +50,6 @@ const App = () => {
               <div className="celestial-bg" />
               <StarField />
               <AppBar />
-              <BackgroundMusic />
               <WelcomePopup />
               <Routes>
                 <Route path="/" element={<Index />} />
