@@ -25,62 +25,71 @@ const EidCard = forwardRef<HTMLDivElement, EidCardProps>(
       <div ref={ref} className={`${widthClass} w-full mx-auto p-2 bg-transparent`}>
         {/* Main Card Container with applied Theme colors */}
         <div 
-          className={`relative overflow-hidden rounded-2xl border-4 ${theme.colors.border} ${theme.colors.bg} p-6 md:p-8 text-center shadow-xl flex flex-col gap-6`}
+          className={`relative overflow-hidden rounded-2xl border-4 ${theme.colors.border} text-center shadow-xl flex flex-col`}
+          style={{
+            backgroundImage: theme.bgImage ? `url(${theme.bgImage})` : undefined,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
         >
-          {/* Top Decorative Header */}
-          <div className="flex items-center justify-between text-2xl">
-            <span className={`opacity-70 ${theme.colors.text}`}>✧</span>
-            <div className="flex items-center gap-3">
-              <span className="text-3xl filter drop-shadow-md">{theme.icon}</span>
-              <span className={`text-3xl ${theme.colors.text}`}>🌙</span>
+          {/* Inner Glassmorphic Layer */}
+          <div className={`flex flex-col gap-6 p-6 md:p-8 w-full h-full ${theme.bgImage ? 'bg-white/60 dark:bg-black/60 backdrop-blur-md' : theme.colors.bg}`}>
+            {/* Top Decorative Header */}
+            <div className="flex items-center justify-between text-2xl">
+              <span className={`opacity-70 ${theme.colors.text}`}>✧</span>
+              <div className="flex items-center gap-3">
+                <span className="text-3xl filter drop-shadow-md">{theme.icon}</span>
+                <span className={`text-3xl ${theme.colors.text}`}>🌙</span>
+              </div>
+              <span className={`opacity-70 ${theme.colors.text}`}>✧</span>
             </div>
-            <span className={`opacity-70 ${theme.colors.text}`}>✧</span>
-          </div>
 
-          <div className="space-y-1">
-            <h3 className={`text-4xl font-display font-black tracking-tight ${theme.colors.text}`}>
-              EID MUBARAK
-            </h3>
-            <p className={`font-display text-xl opacity-80 italic ${theme.colors.text}`}>
-              عيد مبارك
-            </p>
-          </div>
-
-          {/* Letter Body */}
-          <div className="flex flex-col gap-4 text-left">
             <div className="space-y-1">
-              <p className={`text-sm font-medium opacity-80 ${theme.colors.text}`}>To:</p>
-              <p className={`font-display font-bold text-xl ${theme.colors.text}`}>
-                {recipientName || 'Recipient Name'}
+              <h3 className={`text-4xl font-display font-black tracking-tight ${theme.colors.text}`}>
+                EID MUBARAK
+              </h3>
+              <p className={`font-display text-xl opacity-80 italic ${theme.colors.text}`}>
+                عيد مبارك
               </p>
             </div>
 
-            <div className={`rounded-xl p-5 border-2 border-dashed ${theme.colors.border} bg-white/50 dark:bg-black/20 backdrop-blur-sm`}>
-              <p className={`text-sm md:text-base leading-relaxed ${theme.colors.text} whitespace-pre-wrap min-h-[80px]`}>
-                {message || 'May this blessed occasion of Eid bring you joy, peace, and prosperity. May you have a wonderful celebration with your loved ones!'}
-              </p>
+            {/* Letter Body */}
+            <div className="flex flex-col gap-4 text-left">
+              <div className="space-y-1">
+                <p className={`text-sm font-medium opacity-80 ${theme.colors.text}`}>To:</p>
+                <p className={`font-display font-bold text-xl ${theme.colors.text}`}>
+                  {recipientName || 'Recipient Name'}
+                </p>
+              </div>
+
+              {/* Message Box always maintains a strong glassy effect */}
+              <div className={`rounded-xl p-5 border-2 border-dashed ${theme.colors.border} bg-white/70 dark:bg-black/50 backdrop-blur-lg shadow-sm`}>
+                <p className={`text-sm md:text-base leading-relaxed ${theme.colors.text} whitespace-pre-wrap min-h-[80px] font-medium`}>
+                  {message || 'May this blessed occasion of Eid bring you joy, peace, and prosperity. May you have a wonderful celebration with your loved ones!'}
+                </p>
+              </div>
+
+              <div className="space-y-1 text-right mt-2">
+                <p className={`text-sm font-medium opacity-80 ${theme.colors.text}`}>From:</p>
+                <p className={`font-display font-bold text-xl ${theme.colors.text}`}>
+                  {senderName || 'Your Name'}
+                </p>
+              </div>
             </div>
 
-            <div className="space-y-1 text-right mt-2">
-              <p className={`text-sm font-medium opacity-80 ${theme.colors.text}`}>From:</p>
-              <p className={`font-display font-bold text-xl ${theme.colors.text}`}>
-                {senderName || 'Your Name'}
-              </p>
+            {/* Bottom Footer Details */}
+            <div className="mt-4 pt-4 border-t-2 border-dashed border-black/10 dark:border-white/10 flex justify-between items-center">
+              <span className="text-xs font-medium opacity-50 uppercase tracking-widest flex items-center gap-1">
+                <span className="text-sm">{theme.icon}</span> Nostalgic Eid Pro
+              </span>
+              <span className={`text-sm opacity-60 ${theme.colors.text}`}>
+                  ✧ ✧ ✧
+              </span>
             </div>
+            
+            {/* Watermark/Texture overlay (optional) */}
+            <div className="absolute inset-0 pointer-events-none opacity-5 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
           </div>
-
-          {/* Bottom Footer Details */}
-          <div className="mt-4 pt-4 border-t-2 border-dashed border-black/10 dark:border-white/10 flex justify-between items-center">
-             <span className="text-xs font-medium opacity-50 uppercase tracking-widest flex items-center gap-1">
-               <span className="text-sm">{theme.icon}</span> Nostalgic Eid Pro
-             </span>
-             <span className={`text-sm opacity-60 ${theme.colors.text}`}>
-                ✧ ✧ ✧
-             </span>
-          </div>
-          
-          {/* Watermark/Texture overlay (optional) */}
-          <div className="absolute inset-0 pointer-events-none opacity-5 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
         </div>
       </div>
     );

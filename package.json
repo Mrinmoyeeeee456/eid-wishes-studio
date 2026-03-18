@@ -93,5 +93,17 @@
     "typescript-eslint": "^8.38.0",
     "vite": "^7.3.1",
     "vitest": "^4.1.0"
-  }
+  },
+  "description": "Ramadan Mubarak wishing card online  web application ",
+  "main": "eslint.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mrinmoyeeeee456/eid-wishes-studio.git"
+  },
+  "author": "Mati",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mrinmoyeeeee456/eid-wishes-studio/issues"
+  },
+  "homepage": "https://github.com/Mrinmoyeeeee456/eid-wishes-studio#readme"
 }

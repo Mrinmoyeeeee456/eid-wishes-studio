@@ -1,5 +1,6 @@
 export type CharacterTheme = 
   | 'traditional' 
+  | 'photo'
   | 'barbie' 
   | 'belle' 
   | 'rapunzel' 
@@ -20,11 +21,20 @@ export interface FrameOption {
     text: string;
   };
   icon: string;
+  bgImage?: string;
 }
 
 export const frameOptions: FrameOption[] = [
   // Traditional
   { id: 'traditional', label: 'Classic Mosque', category: 'Traditional', icon: '🕌', colors: { border: 'border-emerald-500/30', bg: 'bg-emerald-500/10', text: 'text-emerald-700 dark:text-emerald-400' } },
+  { 
+    id: 'photo', 
+    label: 'Photo Background', 
+    category: 'Traditional', 
+    icon: '📸', 
+    bgImage: 'https://images.unsplash.com/photo-1584043720379-b56cd9199c94?q=80&w=1000&auto=format&fit=crop',
+    colors: { border: 'border-amber-500/70', bg: 'bg-transparent', text: 'text-amber-900 dark:text-amber-100' } 
+  },
   
   // Princesses
   { id: 'barbie', label: 'Barbie Pink', category: 'Princesses', icon: '🎀', colors: { border: 'border-pink-400', bg: 'bg-pink-100 dark:bg-pink-900/30', text: 'text-pink-600 dark:text-pink-300' } },
