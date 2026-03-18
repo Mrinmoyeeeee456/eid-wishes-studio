@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { PenLine, Sparkles, FolderOpen } from 'lucide-react';
@@ -9,65 +8,96 @@ const Index = () => {
 
   const features = [
     {
-      icon: <PenLine className="text-primary" size={28} />,
-      bg: 'bg-accent',
+      icon: <PenLine className="text-[var(--primary-festive)]" size={28} />,
       title: 'Create Greetings',
-      desc: 'Design personalized Eid greeting cards with custom messages and beautiful Islamic themes',
+      desc: 'Design personalized Eid greeting cards with custom messages and beautiful Islamic themes.',
     },
     {
-      icon: <Sparkles className="text-primary" size={28} />,
-      bg: 'bg-accent',
+      icon: <Sparkles className="text-[var(--primary-festive)]" size={28} />,
       title: 'AI-Powered',
-      desc: 'Generate personalized messages with AI in multiple languages including Arabic and Bengali',
+      desc: 'Generate heartfelt messages with AI in multiple languages including Arabic and Bengali.',
     },
     {
-      icon: <FolderOpen className="text-primary" size={28} />,
-      bg: 'bg-accent',
+      icon: <FolderOpen className="text-[var(--primary-festive)]" size={28} />,
       title: 'Save & Share',
-      desc: 'Store your greetings securely and share them with family and friends across social platforms',
+      desc: 'Store your greetings securely and share them with family and friends across all platforms.',
     },
   ];
 
   return (
     <div className="min-h-screen relative">
       {/* Hero */}
-      <main className="relative z-10 max-w-4xl mx-auto px-4 pt-16 pb-8">
+      <main className="relative z-10 max-w-4xl mx-auto flex flex-col items-center justify-center pt-20 px-4 pb-8">
+
+        {/* ── Main Heading ── */}
         <motion.div
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.7 }}
+          transition={{ duration: 0.8 }}
           className="text-center"
         >
-          <div className="flex items-center justify-center gap-2 text-4xl mb-4">
+          <div className="flex items-center justify-center gap-3 text-4xl mb-6">
             <span>⭐</span>
-            <span className="text-primary text-5xl">🕌</span>
+            <span className="text-5xl">🕌</span>
             <span>⭐</span>
           </div>
 
-          <h2 className="text-5xl md:text-7xl font-display font-black text-foreground mb-3">
-            Eid Mubarak
+          <h2 className="text-6xl md:text-8xl font-display font-black mb-4 drop-shadow-2xl text-foreground">
+            EID MUBARAK
           </h2>
-          <div className="w-16 h-1 bg-primary mx-auto rounded-full mb-3" />
-          <p className="text-xl font-display text-primary mb-6">عيد أضحستى مبارك</p>
+
+          <div className="w-20 h-1 bg-[var(--primary-festive)] mx-auto rounded-full mb-4" />
+
+          <p className="text-2xl font-display opacity-80 italic mb-3 text-[var(--primary-festive)]">
+            عيد مبارك
+          </p>
+
           <p className="text-muted-foreground max-w-lg mx-auto leading-relaxed">
-            Create beautiful, personalized Eid-ul-Adha greeting cards to share with your loved ones.
-            Celebrate this blessed occasion with heartfelt messages and elegant designs.
+            Create beautiful, personalized Eid greeting cards and share them with
+            your loved ones. Celebrate this blessed occasion with heartfelt messages.
           </p>
         </motion.div>
 
-        {/* Feature Cards */}
+        {/* ── CTA Buttons ── */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className="flex flex-col sm:flex-row items-center gap-4 mt-10"
+        >
+          <button
+            onClick={() => navigate('/create')}
+            className="px-8 py-3 rounded-xl font-semibold shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl flex items-center gap-2 text-white"
+            style={{ background: 'var(--primary-festive)' }}
+          >
+            ✨ Create Wish
+          </button>
+          <button
+            onClick={() => navigate('/greetings')}
+            className="px-8 py-3 rounded-xl font-semibold border-2 transition-all duration-200 hover:scale-105 flex items-center gap-2"
+            style={{
+              borderColor: 'var(--primary-festive)',
+              color: 'var(--primary-festive)',
+            }}
+          >
+            ☆ My Greetings
+          </button>
+        </motion.div>
+
+        {/* ── Feature Cards ── */}
         <motion.div
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="grid md:grid-cols-3 gap-6 mt-14"
+          transition={{ delay: 0.6, duration: 0.6 }}
+          className="grid md:grid-cols-3 gap-6 mt-16 w-full"
         >
           {features.map((f, i) => (
             <div
               key={i}
-              className="rounded-2xl border border-border bg-card p-6 text-center hover:shadow-lg transition-shadow"
+              className="rounded-3xl border border-white/10 p-6 text-center hover:shadow-xl transition-shadow duration-300"
+              style={{ background: 'var(--card-bg)', backdropFilter: 'blur(12px)' }}
             >
-              <div className={`w-14 h-14 ${f.bg} rounded-xl flex items-center justify-center mx-auto mb-4`}>
+              <div className="w-14 h-14 bg-accent rounded-2xl flex items-center justify-center mx-auto mb-4">
                 {f.icon}
               </div>
               <h3 className="font-display font-bold text-foreground mb-2">{f.title}</h3>
@@ -76,42 +106,19 @@ const Index = () => {
           ))}
         </motion.div>
 
-        {/* CTA Buttons */}
+        {/* ── Bottom Decoration ── */}
         <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.9 }}
+          className="mt-16 text-center"
         >
-          <button
-            onClick={() => navigate('/create')}
-            className="px-8 py-3 bg-primary text-primary-foreground rounded-xl font-semibold shadow-lg hover:opacity-90 transition flex items-center gap-2"
-          >
-            🐪 Create Greeting Card
-          </button>
-          <button
-            onClick={() => navigate('/greetings')}
-            className="px-8 py-3 border-2 border-primary text-primary rounded-xl font-semibold hover:bg-accent transition flex items-center gap-2"
-          >
-            ☆ View My Greetings
-          </button>
+          <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1">🌙 <span className="font-medium" style={{ color: 'var(--primary-festive)' }}>Blessed Eid</span></span>
+            <span className="flex items-center gap-1">⭐ <span className="font-medium" style={{ color: 'var(--primary-festive)' }}>Peace & Joy</span></span>
+            <span className="flex items-center gap-1">🤲 <span className="font-medium" style={{ color: 'var(--primary-festive)' }}>Divine Blessings</span></span>
+          </div>
         </motion.div>
-
-        {/* Bottom decoration */}
-        <div className="flex items-center justify-center gap-2 mt-14 text-2xl">
-          🐪 🐪 🐪 🐪 🐪
-        </div>
-        <div className="flex items-center justify-center gap-1 mt-2 text-primary/50">
-          | | | | |
-        </div>
-        <div className="flex items-center justify-center gap-2 mt-1 text-primary/40">
-          ☆ ☆ ☆ ☆ ☆
-        </div>
-        <div className="flex items-center justify-center gap-6 mt-6 text-sm">
-          <span className="flex items-center gap-1">🌙 <span className="text-primary font-medium">Blessed Eid</span></span>
-          <span className="flex items-center gap-1">⭐ <span className="text-primary font-medium">Peace & Joy</span></span>
-          <span className="flex items-center gap-1">🤲 <span className="text-primary font-medium">Divine Blessings</span></span>
-        </div>
 
         <Footer />
       </main>

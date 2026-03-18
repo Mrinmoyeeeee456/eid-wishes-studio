@@ -41,6 +41,12 @@
     --festive-glow: 160 84% 39% / 0.3;
     --card-glass: 0 0% 100% / 0.8;
     --star-color: 220 20% 15%;
+
+    /* New scaffold vars */
+    --primary-festive: #10b981;
+    --bg-marble: #f3f4f6;
+    --text-main: #1f2937;
+    --card-bg: rgba(255, 255, 255, 0.8);
   }
 
   [data-theme='dark'] {
@@ -77,6 +83,12 @@
     --festive-glow: 43 96% 56% / 0.3;
     --card-glass: 222 47% 6% / 0.7;
     --star-color: 43 96% 90%;
+
+    /* New scaffold vars */
+    --primary-festive: #fbbf24;
+    --bg-marble: #020617;
+    --text-main: #f8fafc;
+    --card-bg: rgba(15, 23, 42, 0.7);
   }
 }
 
