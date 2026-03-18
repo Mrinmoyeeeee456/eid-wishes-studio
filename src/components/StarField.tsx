@@ -2,6 +2,20 @@ import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { useThemeStore } from '../store/themeStore';
 
+export const LaughingMoon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 100 100" className={className} xmlns="http://www.w3.org/2000/svg">
+    {/* Crescent Shape */}
+    <path d="M50 10 A40 40 0 1 0 50 90 A30 30 0 1 1 50 10" fill="currentColor" />
+    {/* Eyes */}
+    <g className="moon-face">
+      <path d="M35 40 Q40 35 45 40" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" />
+      <path d="M55 40 Q60 35 65 40" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" />
+      {/* Laughing Mouth */}
+      <path d="M40 60 Q50 75 60 60" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round" className="animate-bounce" />
+    </g>
+  </svg>
+);
+
 const StarField = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { isDark } = useThemeStore();
@@ -33,13 +47,14 @@ const StarField = () => {
     // ────────────────────────────────────────────
     // 1. TIM-TIM – continuously flickering sparkle dots
     // ────────────────────────────────────────────
-    const NUM_SPARKLES = 80;
+    const NUM_SPARKLES = 250; 
     const sparkles: HTMLDivElement[] = [];
 
     for (let i = 0; i < NUM_SPARKLES; i++) {
       const dot = document.createElement('div');
-      const size = Math.random() * 3 + 1; // 1–4 px
-      dot.className = 'absolute rounded-full pointer-events-none';
+      const isBig = Math.random() > 0.8;
+      const size = isBig ? Math.random() * 4 + 2 : Math.random() * 2 + 1; 
+      dot.className = 'absolute rounded-full pointer-events-none z-0';
       dot.style.width  = `${size}px`;
       dot.style.height = `${size}px`;
       dot.style.left = `${Math.random() * 100}%`;
@@ -122,7 +137,23 @@ const StarField = () => {
       ref={containerRef}
       className={`fixed inset-0 pointer-events-none overflow-hidden -z-10 transition-opacity duration-1000 ${isDark ? 'opacity-100' : 'opacity-0'}`}
       aria-hidden="true"
-    />
+    >
+      {/* Shiny Moons (Multiple sizes for depth) */}
+      {isDark && (
+        <>
+          <div className="absolute top-12 right-12 w-24 h-24 text-amber-50 drop-shadow-[0_0_80px_rgba(251,191,36,0.6)] opacity-90 scale-110">
+              <LaughingMoon className="w-full h-full" />
+          </div>
+          
+          <div className="absolute bottom-20 left-10 w-12 h-12 text-amber-100 drop-shadow-[0_0_40px_rgba(251,191,36,0.4)] opacity-40 blur-[1px]">
+               <LaughingMoon className="w-full h-full rotate-45" />
+          </div>
+
+          <div className="absolute top-1/3 left-1/4 w-4 h-4 rounded-full bg-white shadow-[0_0_20px_white] opacity-60 animate-pulse" />
+          <div className="absolute bottom-1/3 right-1/3 w-6 h-6 rounded-full bg-amber-200 shadow-[0_0_25px_rgba(251,191,36,0.5)] opacity-50 animate-bounce transition-all duration-[5000ms]" />
+        </>
+      )}
+    </div>
   );
 };
 

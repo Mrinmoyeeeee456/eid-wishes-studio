@@ -29,9 +29,26 @@ const CreateGreeting = () => {
   const cardComponentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
+  const generateAIGreeting = useCallback(() => {
+    const aiMessages = [
+      "May the divine blessings of Allah bring you hope, faith, and joy on Eid and forever.",
+      "Wishing you a joyous and blessed Eid filled with prosperity, happiness, and peace.",
+      "May this beautiful occasion of Eid give you all the reasons to make your life even more beautiful. Eid Mubarak!",
+      "Sending you my warmest wishes on Eid. May Allah accept your good deeds and forgive your transgressions.",
+      "May the magic of this Eid bring lots of happiness in your life. Eid Mubarak to you and your family!",
+      "تقبل الله منا ومنكم صالح الأعمال. عيد مبارক! (May Allah accept from us and from you. Eid Mubarak!)",
+      "আমাদের পক্ষ থেকে আপনাকে ও আপনার পরিবারের সবাইকে পবিত্র ঈদুল আযহার আন্তরিক শুভেচ্ছা ও ঈদ মোবারক!",
+      "রমজান শেষে আসলো খুশির ঈদ, খুশিতে ভরে উঠুক আপনার প্রতিটি মুহূর্ত। ঈদ মোবারক!"
+    ];
+    const greetingMsg = aiMessages[Math.floor(Math.random() * aiMessages.length)];
+    const personalized = recipientName ? `Dearest ${recipientName}, ${greetingMsg}` : greetingMsg;
+    setMessage(personalized);
+    toast.success('AI drafted a new message! ✨');
+  }, [recipientName]);
+
   const sizeKey = cardSize.includes('Small') ? 'small' : cardSize.includes('Large') ? 'large' : 'medium';
 
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     const greeting: SavedGreeting = {
       id: crypto.randomUUID(),
       recipientName,
@@ -42,8 +59,8 @@ const CreateGreeting = () => {
       cardSize: sizeKey,
       createdAt: Date.now(),
     };
-    const all = loadGreetings();
-    saveGreetings([greeting, ...all]);
+    const all = await loadGreetings();
+    await saveGreetings([greeting, ...all]);
     toast.success('Greeting saved! 🌙');
   }, [recipientName, senderName, message, sizeKey, frameTheme]);
 
@@ -53,7 +70,7 @@ const CreateGreeting = () => {
       if (!cardComponentRef.current) return;
       try {
         const fn = format === 'png' ? toPng : toJpeg;
-        const dataUrl = await fn(cardComponentRef.current, { quality: 0.95 });
+        const dataUrl = await fn(cardComponentRef.current, { quality: 0.95, pixelRatio: 2 });
         const link = document.createElement('a');
         link.download = `eid-greeting.${format}`;
         link.href = dataUrl;
@@ -122,13 +139,18 @@ const CreateGreeting = () => {
                       value={recipientName}
                       onChange={(e) => setRecipientName(e.target.value)}
                       placeholder="Enter recipient's name"
-                      className="sparkle-input w-full px-4 py-3 rounded-xl border-2 border-border bg-background text-foreground placeholder:text-muted-foreground outline-none transition-all duration-300"
+                      className="sparkle-input w-full px-4 py-4 rounded-xl border-2 border-border bg-background text-foreground placeholder:text-muted-foreground outline-none transition-all duration-300"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-primary mb-1.5 block">Greeting Message</label>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <label className="text-sm font-medium text-primary block">Greeting Message</label>
+                    <button onClick={generateAIGreeting} className="text-xs flex items-center gap-1 text-[var(--primary-festive)] hover:text-primary transition font-medium bg-accent px-2 py-1 rounded-md glass-pulse">
+                      <Sparkles size={12} /> AI Wizard
+                    </button>
+                  </div>
                   <textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
@@ -168,7 +190,7 @@ const CreateGreeting = () => {
                   {/* Categories Map */}
                   {['Traditional', 'Princesses', 'Cartoons'].map((categoryName) => (
                     <div key={categoryName}>
-                      <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4 border-b border-border pb-2">
+                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-3 border-b border-border/40 pb-1">
                         {categoryName}
                       </h4>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -178,16 +200,21 @@ const CreateGreeting = () => {
                             <button
                               key={frame.id}
                               onClick={() => setFrameTheme(frame.id)}
-                              className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all duration-200 ${
+                              className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all duration-300 relative overflow-hidden ${
                                 frameTheme === frame.id
-                                  ? 'border-primary-festive bg-primary-festive/10 scale-[1.02] shadow-md'
-                                  : 'border-border/50 hover:border-primary-festive/50 hover:bg-accent/50 filter grayscale hover:grayscale-0'
+                                  ? 'border-[var(--primary-festive)] bg-[var(--primary-festive)]/10 glow-gold shine-spiritual'
+                                  : 'border-border/50 hover:border-[var(--primary-festive)]/50 hover:bg-accent/50 filter grayscale hover:grayscale-0'
                               }`}
                             >
-                              <span className="text-4xl drop-shadow-md">{frame.icon}</span>
-                              <span className={`text-sm font-medium ${frameTheme === frame.id ? 'text-primary-festive' : 'text-foreground'}`}>
+                              <span className="text-3xl drop-shadow-md group-hover:scale-110 transition-transform">{frame.icon}</span>
+                              <span className={`text-[10px] font-bold uppercase tracking-tight ${frameTheme === frame.id ? 'text-[var(--primary-festive)]' : 'text-foreground'}`}>
                                 {frame.label}
                               </span>
+                              {frameTheme === frame.id && (
+                                <div className="absolute top-1 right-1">
+                                  <Sparkles size={8} className="text-[var(--primary-festive)] animate-pulse" />
+                                </div>
+                              )}
                             </button>
                         ))}
                       </div>
@@ -202,7 +229,7 @@ const CreateGreeting = () => {
               <div className="flex gap-3">
                 <button
                   onClick={handleSave}
-                  className="flex-1 py-3 bg-primary text-primary-foreground rounded-xl font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition"
+                  className="flex-1 py-3 bg-primary text-primary-foreground rounded-xl font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition glass-pulse"
                 >
                   <Save size={16} /> Save Greeting
                 </button>
@@ -237,15 +264,17 @@ const CreateGreeting = () => {
               <h3 className="font-display font-bold text-lg text-foreground">Live Preview Setup</h3>
             </div>
             
-            <div className="rounded-2xl bg-black/5 dark:bg-white/5 p-4 border border-border/50 backdrop-blur-sm shadow-inner relative">
-                <EidCard
-                  ref={cardComponentRef}
-                  recipientName={recipientName}
-                  senderName={senderName}
-                  message={message}
-                  size={sizeKey}
-                  frameId={frameTheme}
-                />
+            <div className="rounded-2xl bg-black/5 dark:bg-white/5 p-4 border border-border/50 backdrop-blur-sm shadow-inner relative overflow-hidden">
+                <div className="card-sharp">
+                    <EidCard
+                      ref={cardComponentRef}
+                      recipientName={recipientName}
+                      senderName={senderName}
+                      message={message}
+                      size={sizeKey}
+                      frameId={frameTheme}
+                    />
+                </div>
             </div>
           </div>
         </div>

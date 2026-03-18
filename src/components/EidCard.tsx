@@ -63,7 +63,7 @@ const EidCard = forwardRef<HTMLDivElement, EidCardProps>(
               </div>
 
               {/* Message Box always maintains a strong glassy effect */}
-              <div className={`rounded-xl p-5 border-2 border-dashed ${theme.colors.border} bg-white/70 dark:bg-black/50 backdrop-blur-lg shadow-sm`}>
+              <div className={`rounded-xl p-5 border-2 border-dashed ${theme.colors.border} bg-white/70 dark:bg-black/50 backdrop-blur-lg shadow-sm shine-spiritual`}>
                 <p className={`text-sm md:text-base leading-relaxed ${theme.colors.text} whitespace-pre-wrap min-h-[80px] font-medium`}>
                   {message || 'May this blessed occasion of Eid bring you joy, peace, and prosperity. May you have a wonderful celebration with your loved ones!'}
                 </p>

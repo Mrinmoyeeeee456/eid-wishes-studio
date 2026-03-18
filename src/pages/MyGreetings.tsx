@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Share2 } from 'lucide-react';
@@ -6,18 +6,27 @@ import { toast } from 'sonner';
 import { toPng, toJpeg } from 'html-to-image';
 import EidCard from '@/components/EidCard';
 import Footer from '@/components/Footer';
-import { SavedGreeting, loadGreetings, saveGreetings } from '@/lib/greetings';
+import { SavedGreeting, loadGreetings, saveGreetings, deleteGreetingFromDb } from '@/lib/greetings';
 
 const MyGreetings = () => {
-  const [greetings, setGreetings] = useState<SavedGreeting[]>(loadGreetings);
+  const [greetings, setGreetings] = useState<SavedGreeting[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const handleDelete = useCallback((id: string) => {
+  useEffect(() => {
+    loadGreetings().then(data => {
+      setGreetings(data);
+      setLoading(false);
+    });
+  }, []);
+
+  const handleDelete = useCallback(async (id: string) => {
     setGreetings((prev) => {
       const updated = prev.filter((g) => g.id !== id);
       saveGreetings(updated);
       return updated;
     });
+    await deleteGreetingFromDb(id);
     toast('Greeting deleted');
   }, []);
 
@@ -48,7 +57,11 @@ const MyGreetings = () => {
           </button>
         </div>
 
-        {greetings.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-20">
+            <p className="text-muted-foreground text-lg">Loading your greetings...</p>
+          </div>
+        ) : greetings.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-muted-foreground text-lg">No greetings yet. Create your first one!</p>
           </div>
@@ -87,7 +100,7 @@ const GreetingItem = ({ greeting, onDelete, onShare }: GreetingItemProps) => {
       if (!cardRef.current) return;
       try {
         const fn = format === 'png' ? toPng : toJpeg;
-        const dataUrl = await fn(cardRef.current, { quality: 0.95 });
+        const dataUrl = await fn(cardRef.current, { quality: 0.95, pixelRatio: 2 });
         const link = document.createElement('a');
         link.download = `eid-greeting.${format}`;
         link.href = dataUrl;
@@ -108,13 +121,16 @@ const GreetingItem = ({ greeting, onDelete, onShare }: GreetingItemProps) => {
       exit={{ scale: 0.9, opacity: 0 }}
       className="space-y-3"
     >
-      <EidCard
-        ref={cardRef}
-        recipientName={greeting.recipientName}
-        senderName={greeting.senderName}
-        message={greeting.message}
-        size={greeting.cardSize || 'medium'}
-      />
+      <div className="card-sharp">
+          <EidCard
+            ref={cardRef}
+            recipientName={greeting.recipientName}
+            senderName={greeting.senderName}
+            message={greeting.message}
+            size={greeting.cardSize || 'medium'}
+            frameId={greeting.frameId as any}
+          />
+      </div>
 
       {/* Actions */}
       <div className="flex gap-2">

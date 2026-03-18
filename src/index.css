@@ -1,11 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
+    /* Safe 8px grid variables */
+    --spacing-1: 0.25rem; /* 4px */
+    --spacing-2: 0.5rem;  /* 8px */
+    --spacing-4: 1rem;    /* 16px */
+    --spacing-6: 1.5rem;  /* 24px */
+    --spacing-8: 2rem;    /* 32px */
+    --spacing-10: 2.5rem; /* 40px */
+    --spacing-12: 3rem;   /* 48px */
     /* Marble Greenish / Creamy White light mode */
     --background: 135 24% 96%; /* #f1f7f4 */
     --foreground: 220 20% 15%;
@@ -43,8 +49,13 @@
     --card-glass: 0 0% 100% / 0.8;
     --star-color: 220 20% 15%;
 
-    /* New scaffold vars */
-    --primary-festive: #10b981;
+    /* Peach Lunar Experience variables */
+    --primary-festive: #fb923c; /* Peach-orange */
+    --bg-peach: #fff7ed;
+    --text-peach: #7c2d12;
+    --accent-lavender: #e9d5ff;
+    --glow-peach: rgba(251, 146, 60, 0.4);
+    
     --bg-marble: #f3f4f6;
     --text-main: #1f2937;
     --card-bg: rgba(255, 255, 255, 0.8);
@@ -141,6 +152,60 @@
     box-shadow: 0 0 30px hsl(var(--festive-glow)), 0 0 60px hsl(var(--festive-glow));
   }
 
+  /* ── Spiritual / Celestial Shine ── */
+  .shine-spiritual {
+    position: relative;
+    overflow: hidden;
+  }
+  .shine-spiritual::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 45%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0.1) 55%,
+      transparent 100%
+    );
+    transform: rotate(45deg);
+    animation: shine-sweep 4s infinite;
+  }
+
+  @keyframes shine-sweep {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+  }
+
+  .glass-pulse {
+    animation: pulse-glass 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glass {
+    0%, 100% { border-color: rgba(255, 255, 255, 0.2); box-shadow: 0 0 5px rgba(255,255,255,0.1); }
+    50% { border-color: rgba(255, 255, 255, 0.5); box-shadow: 0 0 15px rgba(255,255,255,0.3); }
+  }
+
+  /* ── Glassy Light-Emitting Typography ── */
+  .glassy-text-glow {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8);
+    background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,1) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.8)) drop-shadow(0 0 20px rgba(251,146,60,0.4));
+    animation: text-shine 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes text-shine {
+    from { filter: drop-shadow(0 0 8px rgba(255,255,255,0.6)); }
+    to { filter: drop-shadow(0 0 15px rgba(255,255,255,1)) drop-shadow(0 0 30px rgba(251,146,60,0.6)); }
+  }
+
   /* ── Colour helpers ── */
   .text-festive { color: hsl(var(--festive)); }
 
@@ -163,12 +228,28 @@
   /* ── Background blur layer (global page background) ── */
   .celestial-bg {
     position: fixed;
-    inset: 32px;               /* 32px safe margin as specced */
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
+    inset: 2rem; /* 32px (4 * 8) */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     pointer-events: none;
     z-index: -1;
-    border-radius: 24px;
+    border-radius: 1.5rem; /* 24px (3 * 8) */
+  }
+
+  /* ── Celestial Pattern (Tiled Moons & Stars) ── */
+  .celestial-pattern {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -5;
+    background-image: radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.05) 1px, transparent 0);
+    background-size: 40px 40px;
+    opacity: 0.8;
+  }
+
+  [data-theme='dark'] .celestial-pattern {
+     background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5l1.2 3.8h4l-3.2 2.4 1.2 3.8-3.2-2.4-3.2 2.4 1.2-3.8-3.2-2.4h4z' fill='%23fbbf24' fill-opacity='0.08'/%3E%3Ccircle cx='10' cy='40' r='2' fill='%23ffffff' fill-opacity='0.1'/%3E%3Cpath d='M50 45a5 5 0 1 1-5-5 5.03 5.03 0 0 0 5 5z' fill='%23fbbf24' fill-opacity='0.05'/%3E%3C/svg%3E");
+     background-size: 120px 120px;
   }
 
   /* ── Card must stay 100% crisp ── */
@@ -190,5 +271,38 @@
     .print-only { display: block !important; }
     .no-print   { display: none  !important; }
     @page { size: A5; margin: 0; }
+  }
+
+  /* ── Custom Animations ── */
+  @keyframes float {
+    0% { transform: translateY(0px) rotate(-15deg); }
+    50% { transform: translateY(-15px) rotate(-10deg); }
+    100% { transform: translateY(0px) rotate(-15deg); }
+  }
+  /* ── Peach Lunar Immersion ── */
+  .clip-path-banner {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 80%, 0% 100%);
+  }
+
+  /* Wavy divider for Hero */
+  .hero-wave {
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    transform: rotate(180deg);
+  }
+
+  .hero-wave svg {
+    position: relative;
+    display: block;
+    width: calc(100% + 1.3px);
+    height: 50px;
+  }
+
+  .hero-wave .shape-fill {
+    fill: #FFFFFF;
   }
 }

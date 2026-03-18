@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+import type { User } from '@supabase/supabase-js';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Moon, Sun, Stars, BookHeart, UserRound } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -6,10 +8,24 @@ import 'tippy.js/dist/tippy.css'; // optional for styling
 import 'tippy.js/animations/scale.css';
 
 import { useThemeStore } from '../store/themeStore';
+import { supabase } from '@/lib/supabase';
 import AppBarSkeleton from './AppBarSkeleton';
+import AuthModal from './AuthModal';
 
 const AppBar = () => {
   const { isDark, isLoading, toggleTheme } = useThemeStore();
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   if (isLoading) {
     return <AppBarSkeleton />;
@@ -47,49 +63,60 @@ const AppBar = () => {
             </Link>
           </Tippy>
           
-          <Tippy content="Login to sync your wishes 🌙" animation="scale" theme={isDark ? 'light' : 'dark'}>
-            <button className="hidden md:flex items-center gap-2 text-sm font-medium border border-border/60 glass-button px-4 py-1.5 rounded-full hover:glow-spiritual hover:border-festive/50 transition-all duration-300">
+          <Tippy content={user ? "Sign Out" : "Login to sync your wishes 🌙"} animation="scale" theme={isDark ? 'light' : 'dark'}>
+            <button 
+              onClick={() => user ? supabase.auth.signOut() : setIsAuthOpen(true)}
+              className="hidden md:flex items-center gap-2 text-sm font-medium border border-border/60 glass-button px-4 py-1.5 rounded-full hover:glow-spiritual hover:border-festive/50 transition-all duration-300">
               <UserRound size={16} />
-              Login
+              {user ? "Sign Out" : "Login"}
             </button>
           </Tippy>
 
-          {/* Theme Toggle with Tippy Tooltip */}
-          <Tippy 
-            content={isDark ? "Switch to Morning ☀️" : "Activate Night Sky 🌙"} 
-            animation="scale" 
-            theme={isDark ? 'light' : 'dark'}
-          >
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={toggleTheme}
-              className={`p-2.5 rounded-full transition-all duration-300 relative overflow-hidden ${
-                isDark
-                  ? 'bg-secondary text-secondary-foreground glow-spiritual'
-                  : 'bg-amber-100 text-amber-700 glow-gold'
-              }`}
-              aria-label="Toggle theme"
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={isDark ? 'dark' : 'light'}
-                  initial={{ y: -20, opacity: 0, rotate: -90 }}
-                  animate={{ y: 0, opacity: 1, rotate: 0 }}
-                  exit={{ y: 20, opacity: 0, rotate: 90 }}
-                  transition={{ duration: 0.2 }}
+          <div className="flex items-center gap-2 md:gap-4 ml-auto">
+            <div className="hidden sm:flex items-center gap-1 text-[var(--primary-festive)] opacity-60">
+              <Stars size={14} className="animate-pulse" />
+              <span className="text-[10px] uppercase tracking-tighter font-bold">Divine</span>
+            </div>
+            
+            <Tippy content={isDark ? "Sunrise View ☀️" : "Moonlit Night 🌙"} animation="scale">
+              <button
+                onClick={toggleTheme}
+                className="p-2.5 rounded-xl bg-card border border-border/50 hover:bg-accent transition-colors flex items-center justify-center glass-pulse"
+                aria-label="Toggle theme"
+              >
+                {isDark ? (
+                  <Sun size={18} className="text-amber-400" />
+                ) : (
+                  <Moon size={18} className="text-slate-700" />
+                )}
+              </button>
+            </Tippy>
+
+            {user ? (
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => supabase.auth.signOut()}
+                  className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium bg-secondary/50 hover:bg-secondary transition border border-border/50 glass-pulse"
                 >
-                  {isDark ? (
-                    <Moon size={20} className="text-festive" />
-                  ) : (
-                    <Sun size={20} className="text-orange-500" />
-                  )}
-                </motion.div>
-              </AnimatePresence>
-            </motion.button>
-          </Tippy>
+                  <UserRound size={16} />
+                  <span className="hidden md:inline">Sign Out</span>
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsAuthOpen(true)}
+                className="flex items-center gap-2 h-10 px-4 rounded-xl text-sm font-medium text-white shadow-lg transition-all hover:scale-105 active:scale-95 glass-pulse"
+                style={{ background: 'var(--primary-festive)' }}
+              >
+                <UserRound size={16} />
+                <span>Login</span>
+              </button>
+            )}
+          </div>
         </motion.div>
       </div>
+
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
     </nav>
   );
 };
