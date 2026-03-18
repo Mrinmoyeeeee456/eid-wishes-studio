@@ -3,61 +3,57 @@ import { Volume2, VolumeX } from 'lucide-react';
 
 const BackgroundMusic = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
 
   useEffect(() => {
     const audio = new Audio('https://www.chosic.com/wp-content/uploads/2021/04/Ramadan-Alex-Productions.mp3');
     audio.loop = true;
-    audio.volume = 0.4;
+    audio.volume = 0.35;
     audioRef.current = audio;
 
-    const handleInteraction = () => {
-      if (!hasInteracted) {
-        audio.play().then(() => {
-          setIsPlaying(true);
-          setHasInteracted(true);
-        }).catch(err => console.log("Autoplay blocked:", err));
-        
-        // Remove listeners once interaction happens
-        window.removeEventListener('click', handleInteraction);
-        window.removeEventListener('keydown', handleInteraction);
-      }
+    // Try immediate autoplay; if blocked, play on first interaction
+    const tryPlay = () => {
+      audio.play().catch(() => {
+        const onInteract = () => {
+          audio.play().catch(() => {});
+          window.removeEventListener('click', onInteract);
+          window.removeEventListener('touchstart', onInteract);
+        };
+        window.addEventListener('click', onInteract);
+        window.addEventListener('touchstart', onInteract);
+      });
     };
 
-    window.addEventListener('click', handleInteraction);
-    window.addEventListener('keydown', handleInteraction);
+    tryPlay();
 
     return () => {
       audio.pause();
-      window.removeEventListener('click', handleInteraction);
-      window.removeEventListener('keydown', handleInteraction);
+      audio.src = '';
     };
-  }, [hasInteracted]);
+  }, []);
 
-  const toggleMusic = () => {
+  const toggleMute = () => {
     if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play();
+    audioRef.current.muted = !isMuted;
+    if (!isMuted === false) {
+      audioRef.current.play().catch(() => {});
     }
-    setIsPlaying(!isPlaying);
+    setIsMuted(!isMuted);
   };
 
   return (
     <button
-      onClick={toggleMusic}
-      className="fixed bottom-6 left-6 z-[100] p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-xl hover:scale-110 transition-all duration-300 text-festive group"
-      title={isPlaying ? "Mute Music" : "Play Music"}
+      onClick={toggleMute}
+      className="fixed bottom-6 left-6 z-[100] p-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 shadow-xl hover:scale-110 transition-all duration-300 text-festive group"
+      title={isMuted ? 'Unmute Music' : 'Mute Music'}
     >
-      {isPlaying ? (
-        <Volume2 size={20} className="animate-pulse" />
-      ) : (
+      {isMuted ? (
         <VolumeX size={20} className="opacity-50" />
+      ) : (
+        <Volume2 size={20} className="animate-pulse" />
       )}
-      <div className="absolute left-full ml-3 px-2 py-1 bg-black/80 text-white text-[10px] rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-        {isPlaying ? "Ramadan Vibes Playing..." : "Music Muted"}
+      <div className="absolute left-full ml-3 px-3 py-1 bg-black/80 text-white text-[11px] rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+        {isMuted ? '🎵 Unmute Ramadan Vibes' : '🎵 Ramadan Vibes Playing...'}
       </div>
     </button>
   );

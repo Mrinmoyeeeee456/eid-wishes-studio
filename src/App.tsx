@@ -10,6 +10,7 @@ import { useThemeStore } from "./store/themeStore";
 import { useSunriseEffect } from "./hooks/useSunriseEffect";
 import AppBar from "./components/AppBar";
 import BackgroundMusic from "./components/BackgroundMusic";
+import WelcomePopup from "./components/WelcomePopup";
 import StarField from "./components/StarField";
 import Index from "./pages/Index";
 import CreateGreeting from "./pages/CreateGreeting";
@@ -51,6 +52,7 @@ const App = () => {
               <StarField />
               <AppBar />
               <BackgroundMusic />
+              <WelcomePopup />
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/create" element={<CreateGreeting />} />
