@@ -271,6 +271,29 @@
     .print-only { display: block !important; }
     .no-print   { display: none  !important; }
     @page { size: auto; margin: 10mm; }
+
+    #printable-eid-card {
+      width: 140mm !important;
+      height: 196mm !important; /* fixed 5:7 ratio */
+      max-width: none !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      page-break-inside: avoid;
+    }
+    
+    #printable-eid-card > div {
+       width: 100% !important;
+       height: 100% !important;
+       aspect-ratio: auto !important;
+    }
+
+    /* Disable backdrop blur in print as it can render gray/opaque on some webkit engines */
+    #printable-eid-card .backdrop-blur-md,
+    #printable-eid-card .backdrop-blur-lg {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background-color: rgba(255, 255, 255, 0.9) !important;
+    }
   }
 
   /* ── Custom Animations ── */

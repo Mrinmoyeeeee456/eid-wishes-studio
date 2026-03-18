@@ -23,10 +23,10 @@ const EidCard = forwardRef<HTMLDivElement, EidCardProps>(
       'max-w-[440px]';
 
     return (
-      <div ref={ref} className={`${widthClass} w-full mx-auto p-2 bg-transparent print:p-0 print:m-0 print:w-[130mm] print:mx-auto`}>
+      <div ref={ref} id="printable-eid-card" className={`${widthClass} w-full mx-auto p-2 bg-transparent print:p-0 print:m-0`}>
         {/* Main Card Container with applied Theme colors */}
         <div 
-          className={`relative overflow-hidden rounded-2xl border-4 ${theme.colors.border} text-center shadow-xl flex flex-col print:aspect-[5/7]`}
+          className={`relative overflow-hidden rounded-2xl border-4 ${theme.colors.border} text-center shadow-xl flex flex-col`}
           style={{
             backgroundImage: theme.bgImage ? `url(${theme.bgImage})` : undefined,
             backgroundSize: 'cover',
