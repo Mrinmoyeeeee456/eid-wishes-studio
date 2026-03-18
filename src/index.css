@@ -265,12 +265,12 @@
     transition-duration: 300ms;
   }
 
-  /* ── A5 Print Format ── */
+  /* ── Print Format ── */
   @media print {
-    body { background: none; color: black; }
+    body { background: none; color: black; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .print-only { display: block !important; }
     .no-print   { display: none  !important; }
-    @page { size: A5; margin: 0; }
+    @page { size: auto; margin: 10mm; }
   }
 
   /* ── Custom Animations ── */
