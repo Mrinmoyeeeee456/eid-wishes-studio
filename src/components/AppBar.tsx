@@ -40,19 +40,23 @@ const AppBar = () => {
           className="flex items-center gap-4 md:gap-6"
         >
           {/* Protected Route Links */}
-          <Link to="/greetings" className="hidden md:flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-festive transition-colors">
-            <BookHeart size={18} />
-            My Saved Cards
-          </Link>
+          <Tippy content="Browse your saved cards 💌" animation="scale" theme={isDark ? 'light' : 'dark'}>
+            <Link to="/greetings" className="hidden md:flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-festive transition-all duration-300">
+              <BookHeart size={18} />
+              My Saved Cards
+            </Link>
+          </Tippy>
           
-          <button className="hidden md:flex items-center gap-2 text-sm font-medium border border-border px-4 py-1.5 rounded-full hover:bg-accent hover:text-accent-foreground transition-colors">
-            <UserRound size={16} />
-            Login
-          </button>
+          <Tippy content="Login to sync your wishes 🌙" animation="scale" theme={isDark ? 'light' : 'dark'}>
+            <button className="hidden md:flex items-center gap-2 text-sm font-medium border border-border/60 glass-button px-4 py-1.5 rounded-full hover:glow-spiritual hover:border-festive/50 transition-all duration-300">
+              <UserRound size={16} />
+              Login
+            </button>
+          </Tippy>
 
           {/* Theme Toggle with Tippy Tooltip */}
           <Tippy 
-            content="Toggle the Night Sky 🌙" 
+            content={isDark ? "Switch to Morning ☀️" : "Activate Night Sky 🌙"} 
             animation="scale" 
             theme={isDark ? 'light' : 'dark'}
           >
@@ -60,7 +64,11 @@ const AppBar = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={toggleTheme}
-              className="p-2 rounded-full bg-secondary text-secondary-foreground shadow-sm hover:shadow-md transition-shadow relative overflow-hidden"
+              className={`p-2.5 rounded-full transition-all duration-300 relative overflow-hidden ${
+                isDark
+                  ? 'bg-secondary text-secondary-foreground glow-spiritual'
+                  : 'bg-amber-100 text-amber-700 glow-gold'
+              }`}
               aria-label="Toggle theme"
             >
               <AnimatePresence mode="wait" initial={false}>

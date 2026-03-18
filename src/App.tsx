@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { useThemeStore } from "./store/themeStore";
+import { useSunriseEffect } from "./hooks/useSunriseEffect";
 import AppBar from "./components/AppBar";
 import StarField from "./components/StarField";
 import Index from "./pages/Index";
@@ -18,6 +19,9 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const { isDark, hydrateTheme } = useThemeStore();
+
+  // Fire the GSAP Sunrise animation when switching to Light Mode
+  useSunriseEffect(isDark);
 
   useEffect(() => {
     hydrateTheme();

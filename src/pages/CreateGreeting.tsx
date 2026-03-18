@@ -106,23 +106,23 @@ const CreateGreeting = () => {
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium text-primary mb-1.5 block">Your Name (Sender)</label>
+                    <label className="text-sm font-medium text-primary mb-2 block">Your Name (Sender)</label>
                     <input
                       type="text"
                       value={senderName}
                       onChange={(e) => setSenderName(e.target.value)}
                       placeholder="Enter your name"
-                      className="w-full px-4 py-2.5 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition"
+                      className="sparkle-input w-full px-4 py-3 rounded-xl border-2 border-border bg-background text-foreground placeholder:text-muted-foreground outline-none transition-all duration-300"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-primary mb-1.5 block">Recipient Name</label>
+                    <label className="text-sm font-medium text-primary mb-2 block">Recipient Name</label>
                     <input
                       type="text"
                       value={recipientName}
                       onChange={(e) => setRecipientName(e.target.value)}
                       placeholder="Enter recipient's name"
-                      className="w-full px-4 py-2.5 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition"
+                      className="sparkle-input w-full px-4 py-3 rounded-xl border-2 border-border bg-background text-foreground placeholder:text-muted-foreground outline-none transition-all duration-300"
                     />
                   </div>
                 </div>

@@ -8,26 +8,20 @@ const StarField = () => {
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
 
   useEffect(() => {
-    // Check for user accessibility preferences
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    
-    // If not dark mode OR user prefers reduced motion, clear all stars and avoid animating
+
     if (!isDark || prefersReducedMotion) {
       if (timelineRef.current) {
         timelineRef.current.kill();
         timelineRef.current = null;
       }
-      
       if (containerRef.current) {
-        // Gracefully fade out any existing stars
         gsap.to(containerRef.current.children, {
           opacity: 0,
           duration: 0.5,
           onComplete: () => {
-            if (containerRef.current) {
-              containerRef.current.innerHTML = '';
-            }
-          }
+            if (containerRef.current) containerRef.current.innerHTML = '';
+          },
         });
       }
       return;
@@ -36,89 +30,90 @@ const StarField = () => {
     if (!containerRef.current) return;
     const container = containerRef.current;
 
-    const createStar = () => {
-      if (!isDark || !container) return; // double check state
-      
-      // Create DOM element
+    // ────────────────────────────────────────────
+    // 1. TIM-TIM – continuously flickering sparkle dots
+    // ────────────────────────────────────────────
+    const NUM_SPARKLES = 80;
+    const sparkles: HTMLDivElement[] = [];
+
+    for (let i = 0; i < NUM_SPARKLES; i++) {
+      const dot = document.createElement('div');
+      const size = Math.random() * 3 + 1; // 1–4 px
+      dot.className = 'absolute rounded-full pointer-events-none';
+      dot.style.width  = `${size}px`;
+      dot.style.height = `${size}px`;
+      dot.style.left = `${Math.random() * 100}%`;
+      dot.style.top  = `${Math.random() * 100}%`;
+      // Alternate between white and soft cyan for the "spiritual mint" look
+      const isCyan = Math.random() > 0.5;
+      dot.style.backgroundColor = isCyan
+        ? 'rgba(100, 255, 218, 0.9)'
+        : 'rgba(255, 255, 255, 0.9)';
+      dot.style.boxShadow = isCyan
+        ? '0 0 4px rgba(100,255,218,0.8)'
+        : '0 0 4px rgba(255,255,255,0.8)';
+      container.appendChild(dot);
+      sparkles.push(dot);
+
+      // Independent flicker loop for each dot
+      gsap.to(dot, {
+        opacity: Math.random() * 0.8 + 0.1,
+        scale: Math.random() * 1.5 + 0.5,
+        duration: Math.random() * 2 + 0.8,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        delay: Math.random() * 3,
+      });
+    }
+
+    // ────────────────────────────────────────────
+    // 2. SHOOTING STARS – periodic streaks
+    // ────────────────────────────────────────────
+    const createShootingStar = () => {
+      if (!isDark || !container) return;
+
       const star = document.createElement('div');
-      
-      // Star styling: glassmorphic tail with a bright head
-      star.className = 'absolute w-[150px] h-[2px] opacity-0 pointer-events-none';
-      star.style.background = 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2) 60%, rgba(255, 255, 255, 1) 100%)';
+      star.className = 'absolute opacity-0 pointer-events-none';
+      star.style.width  = '120px';
+      star.style.height = '2px';
+      star.style.background =
+        'linear-gradient(90deg, transparent, rgba(255,255,255,0.25) 60%, rgba(255,255,255,1) 100%)';
       star.style.borderRadius = '2px';
-      star.style.filter = 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.8))';
-      // 45 degree angle
+      star.style.filter = 'drop-shadow(0 0 5px rgba(255,255,255,0.9))';
       star.style.transform = 'rotate(45deg)';
-      
       container.appendChild(star);
 
-      // Random starting positions (top/left bias to fall down-right)
-      // We want them to spawn outside the viewport and travel across
       const spawnSide = Math.random() > 0.5 ? 'top' : 'left';
-      let startX, startY;
-      
-      if (spawnSide === 'top') {
-        startX = Math.random() * window.innerWidth;
-        startY = -100;
-      } else {
-        startX = -100;
-        startY = Math.random() * window.innerHeight;
-      }
+      const startX = spawnSide === 'top' ? Math.random() * window.innerWidth : -120;
+      const startY = spawnSide === 'top' ? -120 : Math.random() * window.innerHeight;
+      const dist = Math.max(window.innerWidth, window.innerHeight) * 1.5;
 
-      // GSAP Timeline for this single star
-      const tl = gsap.timeline({
-        onComplete: () => {
-          star.remove();
-        }
-      });
-
-      // Initialize position
       gsap.set(star, { x: startX, y: startY });
 
-      // Path length
-      const travelDistance = Math.max(window.innerWidth, window.innerHeight) * 1.5;
+      const tl = gsap.timeline({ onComplete: () => star.remove() });
+      tl.to(star, { opacity: 1, duration: 0.15, ease: 'power2.in' })
+        .to(star, { x: startX + dist, y: startY + dist, duration: Math.random() * 1.5 + 1.2, ease: 'none' }, '<')
+        .to(star, { opacity: 0, scale: 0, duration: 0.25, ease: 'power1.out' }, '-=0.25');
 
-      // Animate: Fall and fade out (shatter illusion)
-      tl.to(star, {
-        opacity: 1,
-        duration: 0.2,
-        ease: 'power2.in'
-      })
-      .to(star, {
-        x: startX + travelDistance,
-        y: startY + travelDistance,
-        duration: Math.random() * 1.5 + 1.5,
-        ease: 'none'
-      }, "<")
-      .to(star, {
-        opacity: 0,
-        scale: 0,
-        duration: 0.3,
-        ease: 'power1.out'
-      }, "-=0.3"); // Overlap the fadeout slightly before the movement ends
-
-      // Schedule the next star
-      // Random interval between 3 and 7 seconds as requested in spec
-      gsap.delayedCall(Math.random() * 4 + 3, createStar);
+      gsap.delayedCall(Math.random() * 4 + 2, createShootingStar);
     };
 
-    // Kick off the loop
-    createStar();
-    
-    // Fallback cleanup interval to destroy leaked DOM nodes from rapid re-renders
+    createShootingStar();
+
+    // Cleanup leaked DOM nodes
     const cleanupInterval = setInterval(() => {
-      if (container && container.children.length > 20) {
-         // Keep only the most recent ones if things get backed up
-         Array.from(container.children).slice(0, -20).forEach(child => child.remove());
+      if (container && container.children.length > NUM_SPARKLES + 25) {
+        Array.from(container.children)
+          .slice(NUM_SPARKLES, -NUM_SPARKLES)
+          .forEach(c => c.remove());
       }
     }, 10000);
 
     return () => {
-      gsap.killTweensOf(createStar); // kill delayed calls
+      gsap.killTweensOf('*');
       clearInterval(cleanupInterval);
-      if (container) {
-        while (container.firstChild) container.removeChild(container.firstChild);
-      }
+      if (container) container.innerHTML = '';
     };
   }, [isDark]);
 
@@ -126,8 +121,7 @@ const StarField = () => {
     <div
       ref={containerRef}
       className={`fixed inset-0 pointer-events-none overflow-hidden -z-10 transition-opacity duration-1000 ${isDark ? 'opacity-100' : 'opacity-0'}`}
-      // Prevent screen readers from reading background decorative animations
-      aria-hidden="true" 
+      aria-hidden="true"
     />
   );
 };
