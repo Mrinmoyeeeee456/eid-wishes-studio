@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { MotionConfig } from "framer-motion";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -34,22 +35,24 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <div className="relative min-h-screen font-sans antialiased text-foreground bg-background transition-colors duration-500">
-            <StarField />
-            <AppBar />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/create" element={<CreateGreeting />} />
-              <Route path="/greetings" element={<MyGreetings />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </div>
-        </BrowserRouter>
-      </TooltipProvider>
+      <MotionConfig reducedMotion="user">
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <div className="relative min-h-screen font-sans antialiased text-foreground bg-background transition-colors duration-500">
+              <StarField />
+              <AppBar />
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/create" element={<CreateGreeting />} />
+                <Route path="/greetings" element={<MyGreetings />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </BrowserRouter>
+        </TooltipProvider>
+      </MotionConfig>
     </QueryClientProvider>
   );
 };

@@ -8,8 +8,11 @@ const StarField = () => {
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
 
   useEffect(() => {
-    // If not dark mode, forcefully clear all elements and kill everything
-    if (!isDark) {
+    // Check for user accessibility preferences
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    // If not dark mode OR user prefers reduced motion, clear all stars and avoid animating
+    if (!isDark || prefersReducedMotion) {
       if (timelineRef.current) {
         timelineRef.current.kill();
         timelineRef.current = null;

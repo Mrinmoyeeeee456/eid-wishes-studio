@@ -1,19 +1,19 @@
 import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Save, Eye } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Save, Eye, Printer, Download, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { toPng, toJpeg } from 'html-to-image';
+import { useReactToPrint } from 'react-to-print';
+import Tippy from '@tippyjs/react';
 import EidCard from '@/components/EidCard';
 import Footer from '@/components/Footer';
 import { SavedGreeting, loadGreetings, saveGreetings, defaultMessage } from '@/lib/greetings';
+import { frameOptions, CharacterTheme } from '@/lib/frames';
 
 const tabs = [
-  { id: 'content', label: '💬 Content' },
-  { id: 'ai', label: '✨ AI' },
-  { id: 'style', label: '🏛 Style' },
-  { id: 'colors', label: '🎨 Colors' },
-  { id: 'templates', label: '⭐ Templates' },
+  { id: 'content', label: '💬 Text & Message' },
+  { id: 'frames', label: '🖼️ Frame Theme' },
 ];
 
 const cardSizes = ['Small (300px)', 'Medium (400px)', 'Large (500px)'];
@@ -24,7 +24,9 @@ const CreateGreeting = () => {
   const [recipientName, setRecipientName] = useState('');
   const [message, setMessage] = useState(defaultMessage);
   const [cardSize, setCardSize] = useState('Medium (400px)');
-  const cardRef = useRef<HTMLDivElement>(null);
+  const [frameTheme, setFrameTheme] = useState<CharacterTheme>('traditional');
+  
+  const cardComponentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const sizeKey = cardSize.includes('Small') ? 'small' : cardSize.includes('Large') ? 'large' : 'medium';
@@ -36,20 +38,22 @@ const CreateGreeting = () => {
       senderName,
       message,
       template: 'classic',
+      frameId: frameTheme,
       cardSize: sizeKey,
       createdAt: Date.now(),
     };
     const all = loadGreetings();
     saveGreetings([greeting, ...all]);
     toast.success('Greeting saved! 🌙');
-  }, [recipientName, senderName, message, sizeKey]);
+  }, [recipientName, senderName, message, sizeKey, frameTheme]);
 
+  // Export functions
   const exportImage = useCallback(
     async (format: 'png' | 'jpeg') => {
-      if (!cardRef.current) return;
+      if (!cardComponentRef.current) return;
       try {
         const fn = format === 'png' ? toPng : toJpeg;
-        const dataUrl = await fn(cardRef.current, { quality: 0.95 });
+        const dataUrl = await fn(cardComponentRef.current, { quality: 0.95 });
         const link = document.createElement('a');
         link.download = `eid-greeting.${format}`;
         link.href = dataUrl;
@@ -61,6 +65,12 @@ const CreateGreeting = () => {
     },
     []
   );
+
+  const handlePrint = useReactToPrint({
+    contentRef: cardComponentRef,
+    documentTitle: 'Eid Mubarak Wish',
+    onAfterPrint: () => toast.success('Sent to printer!'),
+  });
 
   return (
     <div className="min-h-screen">
@@ -142,25 +152,49 @@ const CreateGreeting = () => {
               </motion.div>
             )}
 
-            {activeTab === 'ai' && (
-              <div className="rounded-2xl border border-border bg-card p-6 text-center py-16">
-                <p className="text-muted-foreground">✨ AI message generation coming soon...</p>
-              </div>
-            )}
-            {activeTab === 'style' && (
-              <div className="rounded-2xl border border-border bg-card p-6 text-center py-16">
-                <p className="text-muted-foreground">🏛 Style options coming soon...</p>
-              </div>
-            )}
-            {activeTab === 'colors' && (
-              <div className="rounded-2xl border border-border bg-card p-6 text-center py-16">
-                <p className="text-muted-foreground">🎨 Color customization coming soon...</p>
-              </div>
-            )}
-            {activeTab === 'templates' && (
-              <div className="rounded-2xl border border-border bg-card p-6 text-center py-16">
-                <p className="text-muted-foreground">⭐ Template gallery coming soon...</p>
-              </div>
+            {/* Frames Tab */}
+            {activeTab === 'frames' && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-2xl border border-border bg-card p-6"
+              >
+                <div className="flex items-center gap-2 mb-6">
+                   <Sparkles className="text-primary-festive" size={24} />
+                   <h3 className="font-display font-bold text-xl text-foreground">Select a Nostalgic Frame</h3>
+                </div>
+
+                <div className="space-y-8">
+                  {/* Categories Map */}
+                  {['Traditional', 'Princesses', 'Cartoons'].map((categoryName) => (
+                    <div key={categoryName}>
+                      <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4 border-b border-border pb-2">
+                        {categoryName}
+                      </h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        {frameOptions
+                          .filter(f => f.category === categoryName)
+                          .map(frame => (
+                            <button
+                              key={frame.id}
+                              onClick={() => setFrameTheme(frame.id)}
+                              className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all duration-200 ${
+                                frameTheme === frame.id
+                                  ? 'border-primary-festive bg-primary-festive/10 scale-[1.02] shadow-md'
+                                  : 'border-border/50 hover:border-primary-festive/50 hover:bg-accent/50 filter grayscale hover:grayscale-0'
+                              }`}
+                            >
+                              <span className="text-4xl drop-shadow-md">{frame.icon}</span>
+                              <span className={`text-sm font-medium ${frameTheme === frame.id ? 'text-primary-festive' : 'text-foreground'}`}>
+                                {frame.label}
+                              </span>
+                            </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
             )}
 
             {/* Action Buttons */}
@@ -197,20 +231,61 @@ const CreateGreeting = () => {
           </div>
 
           {/* Right: Live Preview */}
-          <div>
+          <div className="sticky top-24">
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-primary">🐪</span>
-              <h3 className="font-display font-bold text-lg text-foreground">Live Preview</h3>
+              <span className="text-primary-festive text-xl">🐪</span>
+              <h3 className="font-display font-bold text-lg text-foreground">Live Preview Setup</h3>
             </div>
-            <EidCard
-              ref={cardRef}
-              recipientName={recipientName}
-              senderName={senderName}
-              message={message}
-              size={sizeKey}
-            />
+            
+            <div className="rounded-2xl bg-black/5 dark:bg-white/5 p-4 border border-border/50 backdrop-blur-sm shadow-inner relative">
+                <EidCard
+                  ref={cardComponentRef}
+                  recipientName={recipientName}
+                  senderName={senderName}
+                  message={message}
+                  size={sizeKey}
+                  frameId={frameTheme}
+                />
+            </div>
           </div>
         </div>
+
+        {/* Global Floating Action Button (FAB) for Export/Print */}
+        <Tippy
+          content={<span className="font-medium px-1">Generate your Wish! ✨</span>}
+          placement="left"
+          animation="scale"
+          arrow={true}
+        >
+          <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-3 group">
+            {/* Quick Actions (Hover to reveal vertically) */}
+            <div className="absolute bottom-full right-0 mb-4 flex flex-col gap-3 opacity-0 translate-y-4 pointer-events-none transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto">
+              <button
+                onClick={handleSave}
+                className="w-12 h-12 bg-card border border-border text-foreground rounded-full shadow-lg flex items-center justify-center hover:bg-accent transition hover:scale-110"
+                aria-label="Save Pattern"
+              >
+                <Save size={20} />
+              </button>
+              <button
+                 onClick={() => exportImage('png')}
+                 className="w-12 h-12 bg-card border border-border text-foreground rounded-full shadow-lg flex items-center justify-center hover:bg-accent transition hover:scale-110"
+                 aria-label="Download Image"
+              >
+                 <Download size={20} />
+              </button>
+            </div>
+
+            {/* Main FAB Trigger (Print directly) */}
+            <button
+              onClick={() => handlePrint()}
+              className="w-16 h-16 bg-primary-festive text-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_var(--primary-glow)] flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
+              aria-label="Print Card"
+            >
+              <Printer size={28} />
+            </button>
+          </div>
+        </Tippy>
 
         <Footer />
       </main>

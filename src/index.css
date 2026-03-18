@@ -6,13 +6,14 @@
 
 @layer base {
   :root {
-    --background: 220 14% 96%;
+    /* Marble Greenish / Creamy White light mode */
+    --background: 135 24% 96%; /* #f1f7f4 */
     --foreground: 220 20% 15%;
 
-    --card: 0 0% 100%;
+    --card: 135 20% 98%; /* Creamy White */
     --card-foreground: 220 20% 15%;
 
-    --popover: 0 0% 100%;
+    --popover: 135 20% 98%;
     --popover-foreground: 220 20% 15%;
 
     --primary: 160 84% 39%;
@@ -50,13 +51,14 @@
   }
 
   [data-theme='dark'] {
-    --background: 222 47% 3%;
+    /* Deep Midnight Night Sky */
+    --background: 222 80% 5%; /* #020617 Deep Midnight */
     --foreground: 210 40% 96%;
 
-    --card: 222 47% 6%;
+    --card: 222 80% 10%; 
     --card-foreground: 210 40% 96%;
 
-    --popover: 222 47% 6%;
+    --popover: 222 80% 10%;
     --popover-foreground: 210 40% 96%;
 
     --primary: 43 96% 56%;
@@ -113,6 +115,24 @@
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  /* A5 Print Format */
+  @media print {
+    body {
+      background: none;
+      color: black;
+    }
+    .print-only {
+      display: block !important;
+    }
+    .no-print {
+      display: none !important;
+    }
+    @page {
+      size: A5;
+      margin: 0;
+    }
   }
 
   .festive-gradient {

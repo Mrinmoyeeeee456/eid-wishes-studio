@@ -1,64 +1,86 @@
 import { forwardRef } from 'react';
+import { frameOptions, CharacterTheme } from '@/lib/frames';
 
 interface EidCardProps {
   recipientName: string;
   senderName: string;
   message: string;
   size?: string;
+  frameId?: CharacterTheme;
 }
 
 const EidCard = forwardRef<HTMLDivElement, EidCardProps>(
-  ({ recipientName, senderName, message, size = 'medium' }, ref) => {
+  ({ recipientName, senderName, message, size = 'Medium (400px)', frameId = 'traditional' }, ref) => {
+    
+    // Find selected frame theme
+    const theme = frameOptions.find(f => f.id === frameId) || frameOptions[0];
+    
+    // Determine card width based on standard 8px grid sizes
     const widthClass =
-      size === 'small' ? 'max-w-[300px]' : size === 'large' ? 'max-w-[500px]' : 'max-w-[400px]';
+      size.includes('Small') ? 'max-w-[320px]' : 
+      size.includes('Large') ? 'max-w-[560px]' : 
+      'max-w-[440px]';
 
     return (
-      <div ref={ref} className={`${widthClass} w-full mx-auto`}>
-        <div className="rounded-2xl border-2 border-dashed border-primary/30 bg-accent/30 p-8 text-center space-y-4">
-          {/* Top icons */}
-          <div className="flex items-center justify-center gap-2 text-2xl">
-            <span className="text-primary/50">☆</span>
-            <span className="text-primary text-3xl">🐪</span>
-            <span className="text-primary/50">☆</span>
+      <div ref={ref} className={`${widthClass} w-full mx-auto p-2 bg-transparent`}>
+        {/* Main Card Container with applied Theme colors */}
+        <div 
+          className={`relative overflow-hidden rounded-2xl border-4 ${theme.colors.border} ${theme.colors.bg} p-6 md:p-8 text-center shadow-xl flex flex-col gap-6`}
+        >
+          {/* Top Decorative Header */}
+          <div className="flex items-center justify-between text-2xl">
+            <span className={`opacity-70 ${theme.colors.text}`}>✧</span>
+            <div className="flex items-center gap-3">
+              <span className="text-3xl filter drop-shadow-md">{theme.icon}</span>
+              <span className={`text-3xl ${theme.colors.text}`}>🌙</span>
+            </div>
+            <span className={`opacity-70 ${theme.colors.text}`}>✧</span>
           </div>
 
-          {/* Title */}
-          <h3 className="text-2xl md:text-3xl font-display font-bold text-primary">
-            Eid Mubarak
-          </h3>
-          <p className="font-display text-primary/70 text-lg">عيد أضحستى مبارك</p>
-
-          {/* Recipient */}
           <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">To:</p>
-            <p className="font-display font-bold text-primary text-lg">
-              {recipientName || 'Recipient Name'}
+            <h3 className={`text-4xl font-display font-black tracking-tight ${theme.colors.text}`}>
+              EID MUBARAK
+            </h3>
+            <p className={`font-display text-xl opacity-80 italic ${theme.colors.text}`}>
+              عيد مبارك
             </p>
           </div>
 
-          {/* Message */}
-          <div className="rounded-xl border border-primary/20 bg-card p-4">
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {message ||
-                'May this blessed occasion of Eid-ul-Adha bring you joy, peace, and prosperity. May Allah accept your prayers and sacrifices. Eid Mubarak!'}
-            </p>
+          {/* Letter Body */}
+          <div className="flex flex-col gap-4 text-left">
+            <div className="space-y-1">
+              <p className={`text-sm font-medium opacity-80 ${theme.colors.text}`}>To:</p>
+              <p className={`font-display font-bold text-xl ${theme.colors.text}`}>
+                {recipientName || 'Recipient Name'}
+              </p>
+            </div>
+
+            <div className={`rounded-xl p-5 border-2 border-dashed ${theme.colors.border} bg-white/50 dark:bg-black/20 backdrop-blur-sm`}>
+              <p className={`text-sm md:text-base leading-relaxed ${theme.colors.text} whitespace-pre-wrap min-h-[80px]`}>
+                {message || 'May this blessed occasion of Eid bring you joy, peace, and prosperity. May you have a wonderful celebration with your loved ones!'}
+              </p>
+            </div>
+
+            <div className="space-y-1 text-right mt-2">
+              <p className={`text-sm font-medium opacity-80 ${theme.colors.text}`}>From:</p>
+              <p className={`font-display font-bold text-xl ${theme.colors.text}`}>
+                {senderName || 'Your Name'}
+              </p>
+            </div>
           </div>
 
-          {/* Mosque icon */}
-          <div className="text-4xl text-primary">🕌</div>
-
-          {/* Sender */}
-          <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">From:</p>
-            <p className="font-display font-bold text-primary text-lg">
-              {senderName || 'Your Name'}
-            </p>
+          {/* Bottom Footer Details */}
+          <div className="mt-4 pt-4 border-t-2 border-dashed border-black/10 dark:border-white/10 flex justify-between items-center">
+             <span className="text-xs font-medium opacity-50 uppercase tracking-widest flex items-center gap-1">
+               <span className="text-sm">{theme.icon}</span> Nostalgic Eid Pro
+             </span>
+             <span className={`text-sm opacity-60 ${theme.colors.text}`}>
+                ✧ ✧ ✧
+             </span>
           </div>
-
-          {/* Bottom decorations */}
-          <div className="flex items-center justify-center gap-1 text-primary/40 text-sm">
-            🐪 🐪 🐪 🐪 🐪
-          </div>
+          
+          {/* Watermark/Texture overlay (optional) */}
+          <div className="absolute inset-0 pointer-events-none opacity-5 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
         </div>
       </div>
     );

@@ -4,6 +4,7 @@ export interface SavedGreeting {
   senderName: string;
   message: string;
   template: string;
+  frameId: string;
   cardSize: string;
   createdAt: number;
 }
