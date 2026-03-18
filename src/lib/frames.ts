@@ -1,15 +1,15 @@
 export type CharacterTheme = 
-  | 'traditional' 
-  | 'photo'
-  | 'barbie' 
-  | 'belle' 
-  | 'rapunzel' 
-  | 'cinderella' 
-  | 'mickey' 
-  | 'ben10' 
-  | 'naruto' 
-  | 'pokemon' 
-  | 'tomjerry';
+  | 'traditional_mosque' 
+  | 'ramadan_lantern'
+  | 'eid_cow'
+  | 'barbie_star' 
+  | 'barbie_friends' 
+  | 'barbie_glamor' 
+  | 'avengers_assemble' 
+  | 'avengers_action' 
+  | 'doraemon_fun' 
+  | 'tomjerry_chase'
+  | 'anime_hero';
 
 export interface FrameOption {
   id: CharacterTheme;
@@ -24,28 +24,100 @@ export interface FrameOption {
   bgImage?: string;
 }
 
+const basePath = '/templates/ramadancard';
+
 export const frameOptions: FrameOption[] = [
   // Traditional
-  { id: 'traditional', label: 'Classic Mosque', category: 'Traditional', icon: '🕌', colors: { border: 'border-emerald-500/30', bg: 'bg-emerald-500/10', text: 'text-emerald-700 dark:text-emerald-400' } },
   { 
-    id: 'photo', 
-    label: 'Photo Background', 
+    id: 'traditional_mosque', 
+    label: 'Beautiful Mosque', 
     category: 'Traditional', 
-    icon: '📸', 
-    bgImage: 'https://images.unsplash.com/photo-1584043720379-b56cd9199c94?q=80&w=1000&auto=format&fit=crop',
+    icon: '🕌', 
+    bgImage: `${basePath}/ram4.jpg`,
+    colors: { border: 'border-emerald-500/70', bg: 'bg-transparent', text: 'text-emerald-900 dark:text-emerald-100' } 
+  },
+  { 
+    id: 'ramadan_lantern', 
+    label: 'Festive Lanterns', 
+    category: 'Traditional', 
+    icon: '🏮', 
+    bgImage: `${basePath}/ram1.jpg`,
     colors: { border: 'border-amber-500/70', bg: 'bg-transparent', text: 'text-amber-900 dark:text-amber-100' } 
+  },
+  { 
+    id: 'eid_cow', 
+    label: 'Qurbani Cow', 
+    category: 'Traditional', 
+    icon: '🐄', 
+    bgImage: `${basePath}/cow1.webp`,
+    colors: { border: 'border-orange-500/70', bg: 'bg-transparent', text: 'text-orange-900 dark:text-orange-100' } 
   },
   
   // Princesses
-  { id: 'barbie', label: 'Barbie Pink', category: 'Princesses', icon: '🎀', colors: { border: 'border-pink-400', bg: 'bg-pink-100 dark:bg-pink-900/30', text: 'text-pink-600 dark:text-pink-300' } },
-  { id: 'belle', label: 'Belle Yellow', category: 'Princesses', icon: '🌹', colors: { border: 'border-yellow-400', bg: 'bg-yellow-50 dark:bg-yellow-900/30', text: 'text-yellow-700 dark:text-yellow-300' } },
-  { id: 'rapunzel', label: 'Rapunzel Purple', category: 'Princesses', icon: '☀️', colors: { border: 'border-purple-400', bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-700 dark:text-purple-300' } },
-  { id: 'cinderella', label: 'Cinderella Blue', category: 'Princesses', icon: '🥿', colors: { border: 'border-blue-400', bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-300' } },
+  { 
+    id: 'barbie_star', 
+    label: 'Barbie Glow', 
+    category: 'Princesses', 
+    icon: '🎀', 
+    bgImage: `${basePath}/barb1.webp`,
+    colors: { border: 'border-pink-400', bg: 'bg-transparent', text: 'text-pink-900 dark:text-pink-100' } 
+  },
+  { 
+    id: 'barbie_friends', 
+    label: 'Barbie Dream', 
+    category: 'Princesses', 
+    icon: '⭐', 
+    bgImage: `${basePath}/barb2.jpg`,
+    colors: { border: 'border-fuchsia-400', bg: 'bg-transparent', text: 'text-fuchsia-900 dark:text-fuchsia-100' } 
+  },
+  { 
+    id: 'barbie_glamor', 
+    label: 'Barbie Glam', 
+    category: 'Princesses', 
+    icon: '✨', 
+    bgImage: `${basePath}/barb4.jpg`,
+    colors: { border: 'border-rose-400', bg: 'bg-transparent', text: 'text-rose-900 dark:text-rose-100' } 
+  },
   
   // Cartoons
-  { id: 'mickey', label: 'Mickey Mouse', category: 'Cartoons', icon: '🐭', colors: { border: 'border-red-500', bg: 'bg-red-50 dark:bg-red-900/20', text: 'text-red-700 dark:text-red-400' } },
-  { id: 'ben10', label: 'Ben 10 Green', category: 'Cartoons', icon: '⌚', colors: { border: 'border-green-500', bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-700 dark:text-green-400' } },
-  { id: 'naruto', label: 'Naruto Orange', category: 'Cartoons', icon: '🍥', colors: { border: 'border-orange-500', bg: 'bg-orange-100 dark:bg-orange-900/30', text: 'text-orange-700 dark:text-orange-400' } },
-  { id: 'pokemon', label: 'Pokémon', category: 'Cartoons', icon: '⚡', colors: { border: 'border-yellow-500', bg: 'bg-yellow-100 dark:bg-yellow-900/20', text: 'text-yellow-700 dark:text-yellow-400' } },
-  { id: 'tomjerry', label: 'Tom & Jerry', category: 'Cartoons', icon: '🧀', colors: { border: 'border-amber-600', bg: 'bg-amber-50 dark:bg-amber-900/20', text: 'text-amber-800 dark:text-amber-400' } },
+  { 
+    id: 'avengers_assemble', 
+    label: 'Avengers Strike', 
+    category: 'Cartoons', 
+    icon: '🛡️', 
+    bgImage: `${basePath}/avan1.webp`,
+    colors: { border: 'border-blue-600', bg: 'bg-transparent', text: 'text-blue-900 dark:text-blue-100' } 
+  },
+  { 
+    id: 'avengers_action', 
+    label: 'Avengers Base', 
+    category: 'Cartoons', 
+    icon: '⚡', 
+    bgImage: `${basePath}/avan2.jpg`,
+    colors: { border: 'border-red-600', bg: 'bg-transparent', text: 'text-red-900 dark:text-red-100' } 
+  },
+  { 
+    id: 'doraemon_fun', 
+    label: 'Doraemon Magic', 
+    category: 'Cartoons', 
+    icon: '🛸', 
+    bgImage: `${basePath}/dor1.jpg`,
+    colors: { border: 'border-sky-400', bg: 'bg-transparent', text: 'text-sky-900 dark:text-sky-100' } 
+  },
+  { 
+    id: 'tomjerry_chase', 
+    label: 'Tom & Jerry', 
+    category: 'Cartoons', 
+    icon: '🧀', 
+    bgImage: `${basePath}/tomj1.jpg`,
+    colors: { border: 'border-amber-600', bg: 'bg-transparent', text: 'text-orange-900 dark:text-orange-100' } 
+  },
+  { 
+    id: 'anime_hero', 
+    label: 'Anime Style', 
+    category: 'Cartoons', 
+    icon: '⚔️', 
+    bgImage: `${basePath}/ani6.jpg`,
+    colors: { border: 'border-indigo-500', bg: 'bg-transparent', text: 'text-indigo-900 dark:text-indigo-100' } 
+  },
 ];

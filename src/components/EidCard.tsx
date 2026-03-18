@@ -10,7 +10,7 @@ interface EidCardProps {
 }
 
 const EidCard = forwardRef<HTMLDivElement, EidCardProps>(
-  ({ recipientName, senderName, message, size = 'Medium (400px)', frameId = 'traditional' }, ref) => {
+  ({ recipientName, senderName, message, size = 'Medium (400px)', frameId = 'traditional_mosque' }, ref) => {
     
     // Find selected frame theme
     const theme = frameOptions.find(f => f.id === frameId) || frameOptions[0];

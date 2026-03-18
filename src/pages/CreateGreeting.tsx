@@ -24,7 +24,7 @@ const CreateGreeting = () => {
   const [recipientName, setRecipientName] = useState('');
   const [message, setMessage] = useState(defaultMessage);
   const [cardSize, setCardSize] = useState('Medium (400px)');
-  const [frameTheme, setFrameTheme] = useState<CharacterTheme>('traditional');
+  const [frameTheme, setFrameTheme] = useState<CharacterTheme>('traditional_mosque');
   
   const cardComponentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
