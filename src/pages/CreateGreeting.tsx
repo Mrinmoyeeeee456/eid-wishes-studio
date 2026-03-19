@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Save, Eye, Printer, Download, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Save, Eye, Sparkles, ImagePlus } from 'lucide-react';
 import { toast } from 'sonner';
 import { toPng, toJpeg } from 'html-to-image';
 import { useReactToPrint } from 'react-to-print';
@@ -10,6 +10,7 @@ import EidCard from '@/components/EidCard';
 import Footer from '@/components/Footer';
 import { SavedGreeting, loadGreetings, saveGreetings, getDefaultMessage } from '@/lib/greetings';
 import { frameOptions, CharacterTheme } from '@/lib/frames';
+import { Printer, Download } from 'lucide-react';
 
 const tabs = [
   { id: 'content', label: '💬 Text & Message' },
@@ -17,6 +18,9 @@ const tabs = [
 ];
 
 const cardSizes = ['Small (300px)', 'Medium (400px)', 'Large (500px)'];
+
+// All categories in display order
+const allCategories = ['Premium', 'Eid Festive', 'Traditional', 'Elegant', 'Pastel', 'Bold', 'Princesses', 'Cartoons'] as const;
 
 const CreateGreeting = () => {
   const [activeTab, setActiveTab] = useState('content');
@@ -26,8 +30,10 @@ const CreateGreeting = () => {
   const [eidType, setEidType] = useState<'fitar' | 'azha'>('fitar');
   const [cardSize, setCardSize] = useState('Medium (400px)');
   const [frameTheme, setFrameTheme] = useState<CharacterTheme>('traditional_mosque');
+  const [customBgImage, setCustomBgImage] = useState<string | null>(null);
   
   const cardComponentRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,6 +69,24 @@ const CreateGreeting = () => {
     toast.success('AI drafted a new message! ✨');
   }, [recipientName, eidType]);
 
+  const handleCustomPhotoUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setCustomBgImage(url);
+      toast.success('Custom photo applied! 📷');
+    }
+  }, []);
+
+  const clearCustomPhoto = useCallback(() => {
+    if (customBgImage) {
+      URL.revokeObjectURL(customBgImage);
+    }
+    setCustomBgImage(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    toast('Custom photo removed');
+  }, [customBgImage]);
+
   const sizeKey = cardSize.includes('Small') ? 'small' : cardSize.includes('Large') ? 'large' : 'medium';
 
   const handleSave = useCallback(async () => {
@@ -82,7 +106,6 @@ const CreateGreeting = () => {
     toast.success('Greeting saved! 🌙');
   }, [recipientName, senderName, message, sizeKey, frameTheme, eidType]);
 
-  // Export functions
   const exportImage = useCallback(
     async (format: 'png' | 'jpeg') => {
       if (!cardComponentRef.current) return;
@@ -157,7 +180,7 @@ const CreateGreeting = () => {
                       value={recipientName}
                       onChange={(e) => setRecipientName(e.target.value)}
                       placeholder="Enter recipient's name"
-                      className="sparkle-input w-full px-4 py-4 rounded-xl border-2 border-border bg-background text-foreground placeholder:text-muted-foreground outline-none transition-all duration-300"
+                      className="sparkle-input w-full px-4 py-3 rounded-xl border-2 border-border bg-background text-foreground placeholder:text-muted-foreground outline-none transition-all duration-300"
                     />
                   </div>
                 </div>
@@ -192,15 +215,18 @@ const CreateGreeting = () => {
 
                 <div>
                   <div className="flex justify-between items-center mb-1.5">
-                    <label className="text-sm font-medium text-primary block">Greeting Message</label>
-                    <button onClick={generateAIGreeting} className="text-xs flex items-center gap-1 text-[var(--primary-festive)] hover:text-primary transition font-medium bg-accent px-2 py-1 rounded-md glass-pulse">
-                      <Sparkles size={12} /> AI Wizard
+                    <label className="text-sm font-medium text-primary block">
+                      ✍️ Type your message or use AI Wizard
+                    </label>
+                    <button onClick={generateAIGreeting} className="text-xs flex items-center gap-1 text-[var(--primary-festive)] hover:text-primary transition font-medium bg-accent px-3 py-1.5 rounded-md">
+                      <Sparkles size={12} /> AI Generate
                     </button>
                   </div>
                   <textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     rows={4}
+                    placeholder="Write your heartfelt Eid message here... or click AI Generate for inspiration ✨"
                     className="w-full px-4 py-2.5 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/30 focus:border-primary outline-none transition resize-none"
                   />
                 </div>
@@ -229,43 +255,82 @@ const CreateGreeting = () => {
               >
                 <div className="flex items-center gap-2 mb-6">
                    <Sparkles className="text-primary-festive" size={24} />
-                   <h3 className="font-display font-bold text-xl text-foreground">Select a Nostalgic Frame</h3>
+                   <h3 className="font-display font-bold text-xl text-foreground">Select a Card Theme</h3>
+                </div>
+
+                {/* Custom Photo Upload Section */}
+                <div className="mb-6 p-4 rounded-xl border-2 border-dashed border-border bg-accent/30">
+                  <div className="flex items-center gap-3 mb-3">
+                    <ImagePlus size={20} className="text-[var(--primary-festive)]" />
+                    <span className="font-semibold text-sm text-foreground">Upload Your Own Photo</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-3">Use your own image as the card background</p>
+                  <div className="flex gap-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleCustomPhotoUpload}
+                      className="hidden"
+                      id="custom-photo-input"
+                    />
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-4 py-2 bg-[var(--primary-festive)] text-white rounded-lg text-sm font-medium hover:opacity-90 transition flex items-center gap-2"
+                    >
+                      <ImagePlus size={14} /> Choose Photo
+                    </button>
+                    {customBgImage && (
+                      <button
+                        onClick={clearCustomPhoto}
+                        className="px-4 py-2 border border-border text-foreground rounded-lg text-sm font-medium hover:bg-accent transition"
+                      >
+                        ✕ Remove
+                      </button>
+                    )}
+                  </div>
+                  {customBgImage && (
+                    <div className="mt-3 rounded-lg overflow-hidden border border-border w-20 h-20">
+                      <img src={customBgImage} alt="Custom" className="w-full h-full object-cover" />
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-8">
-                  {/* Categories Map */}
-                  {['Traditional', 'Princesses', 'Cartoons'].map((categoryName) => (
-                    <div key={categoryName}>
-                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-3 border-b border-border/40 pb-1">
-                        {categoryName}
-                      </h4>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                        {frameOptions
-                          .filter(f => f.category === categoryName)
-                          .map(frame => (
+                  {allCategories.map((categoryName) => {
+                    const categoryFrames = frameOptions.filter(f => f.category === categoryName);
+                    if (categoryFrames.length === 0) return null;
+                    return (
+                      <div key={categoryName}>
+                        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-3 border-b border-border/40 pb-1">
+                          {categoryName} ({categoryFrames.length})
+                        </h4>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {categoryFrames.map(frame => (
                             <button
                               key={frame.id}
-                              onClick={() => setFrameTheme(frame.id)}
-                              className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all duration-300 relative overflow-hidden ${
-                                frameTheme === frame.id
-                                  ? 'border-[var(--primary-festive)] bg-[var(--primary-festive)]/10 glow-gold shine-spiritual'
-                                  : 'border-border/50 hover:border-[var(--primary-festive)]/50 hover:bg-accent/50 filter grayscale hover:grayscale-0'
+                              onClick={() => { setFrameTheme(frame.id); setCustomBgImage(null); }}
+                              className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all duration-300 relative overflow-hidden ${
+                                frameTheme === frame.id && !customBgImage
+                                  ? 'border-[var(--primary-festive)] bg-[var(--primary-festive)]/10 glow-gold'
+                                  : 'border-border/50 hover:border-[var(--primary-festive)]/50 hover:bg-accent/50'
                               }`}
                             >
-                              <span className="text-3xl drop-shadow-md group-hover:scale-110 transition-transform">{frame.icon}</span>
-                              <span className={`text-[10px] font-bold uppercase tracking-tight ${frameTheme === frame.id ? 'text-[var(--primary-festive)]' : 'text-foreground'}`}>
+                              <span className="text-2xl drop-shadow-md">{frame.icon}</span>
+                              <span className={`text-[10px] font-bold uppercase tracking-tight ${frameTheme === frame.id && !customBgImage ? 'text-[var(--primary-festive)]' : 'text-foreground'}`}>
                                 {frame.label}
                               </span>
-                              {frameTheme === frame.id && (
+                              {frameTheme === frame.id && !customBgImage && (
                                 <div className="absolute top-1 right-1">
                                   <Sparkles size={8} className="text-[var(--primary-festive)] animate-pulse" />
                                 </div>
                               )}
                             </button>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </motion.div>
             )}
@@ -275,7 +340,7 @@ const CreateGreeting = () => {
               <div className="flex gap-3">
                 <button
                   onClick={handleSave}
-                  className="flex-1 py-3 bg-primary text-primary-foreground rounded-xl font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition glass-pulse"
+                  className="flex-1 py-3 bg-primary text-primary-foreground rounded-xl font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition"
                 >
                   <Save size={16} /> Save Greeting
                 </button>
@@ -307,10 +372,10 @@ const CreateGreeting = () => {
           <div className="sticky top-24">
             <div className="flex items-center gap-2 mb-4">
               <span className="text-primary-festive text-xl">🐪</span>
-              <h3 className="font-display font-bold text-lg text-foreground">Live Preview Setup</h3>
+              <h3 className="font-display font-bold text-lg text-foreground">Live Preview</h3>
             </div>
             
-            <div className="rounded-2xl bg-black/5 dark:bg-white/5 p-4 border border-border/50 backdrop-blur-sm shadow-inner relative overflow-hidden">
+            <div className="rounded-2xl bg-black/5 dark:bg-white/5 p-4 border border-border/50 shadow-inner relative overflow-hidden">
                 <div className="card-sharp">
                     <EidCard
                       ref={cardComponentRef}
@@ -320,39 +385,38 @@ const CreateGreeting = () => {
                       size={sizeKey}
                       frameId={frameTheme}
                       eidType={eidType}
+                      customBg={customBgImage || undefined}
                     />
                 </div>
             </div>
           </div>
         </div>
 
-        {/* Global Floating Action Button (FAB) for Export/Print */}
+        {/* Floating Action Button */}
         <Tippy
-          content={<span className="font-medium px-1">Generate your Wish! ✨</span>}
+          content={<span className="font-medium px-1">Print your card! 🖨️</span>}
           placement="left"
           animation="scale"
           arrow={true}
         >
           <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-3 group">
-            {/* Quick Actions (Hover to reveal vertically) */}
             <div className="absolute bottom-full right-0 mb-4 flex flex-col gap-3 opacity-0 translate-y-4 pointer-events-none transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto">
               <button
                 onClick={handleSave}
                 className="w-12 h-12 bg-card border border-border text-foreground rounded-full shadow-lg flex items-center justify-center hover:bg-accent transition hover:scale-110"
-                aria-label="Save Pattern"
+                aria-label="Save"
               >
                 <Save size={20} />
               </button>
               <button
                  onClick={() => exportImage('png')}
                  className="w-12 h-12 bg-card border border-border text-foreground rounded-full shadow-lg flex items-center justify-center hover:bg-accent transition hover:scale-110"
-                 aria-label="Download Image"
+                 aria-label="Download"
               >
                  <Download size={20} />
               </button>
             </div>
 
-            {/* Main FAB Trigger (Print directly) */}
             <button
               onClick={() => handlePrint()}
               className="w-16 h-16 bg-primary-festive text-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_var(--primary-glow)] flex items-center justify-center transition-transform hover:scale-105 active:scale-95"

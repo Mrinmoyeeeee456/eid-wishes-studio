@@ -8,33 +8,36 @@ interface EidCardProps {
   size?: string;
   frameId?: CharacterTheme;
   eidType?: 'fitar' | 'azha';
+  customBg?: string;
 }
 
 const EidCard = forwardRef<HTMLDivElement, EidCardProps>(
-  ({ recipientName, senderName, message, size = 'Medium (400px)', frameId = 'traditional_mosque', eidType = 'fitar' }, ref) => {
+  ({ recipientName, senderName, message, size = 'Medium (400px)', frameId = 'traditional_mosque', eidType = 'fitar', customBg }, ref) => {
     
-    // Find selected frame theme
     const theme = frameOptions.find(f => f.id === frameId) || frameOptions[0];
     
-    // Determine card width based on standard 8px grid sizes
     const widthClass =
-      size.includes('Small') ? 'max-w-[320px]' : 
-      size.includes('Large') ? 'max-w-[560px]' : 
+      size.includes('Small') || size === 'small' ? 'max-w-[320px]' : 
+      size.includes('Large') || size === 'large' ? 'max-w-[560px]' : 
       'max-w-[440px]';
+
+    // Decide background image: custom upload takes priority, then frame bgImage
+    const bgImageUrl = customBg || theme.bgImage;
+    const hasBgImage = !!bgImageUrl;
 
     return (
       <div ref={ref} id="printable-eid-card" className={`${widthClass} w-full mx-auto p-2 bg-transparent print:p-0 print:m-0`}>
-        {/* Main Card Container with applied Theme colors */}
         <div 
           className={`relative overflow-hidden rounded-2xl border-4 ${theme.colors.border} text-center shadow-xl flex flex-col`}
           style={{
-            backgroundImage: theme.bgImage ? `url(${theme.bgImage})` : undefined,
+            backgroundImage: bgImageUrl ? `url(${bgImageUrl})` : undefined,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
+            aspectRatio: '5 / 7',
           }}
         >
-          {/* Inner Glassmorphic Layer */}
-          <div className={`flex flex-col gap-6 p-6 md:p-8 w-full h-full ${theme.bgImage ? 'bg-white/60 dark:bg-black/60 backdrop-blur-md' : theme.colors.bg}`}>
+          {/* Inner Layer — SOLID background for readability, NO heavy blur */}
+          <div className={`flex flex-col gap-6 p-6 md:p-8 w-full h-full ${hasBgImage ? 'bg-white/90 dark:bg-black/80' : theme.colors.bg}`}>
             {/* Top Decorative Header */}
             <div className="flex items-center justify-between text-2xl">
               <span className={`opacity-70 ${theme.colors.text}`}>✧</span>
@@ -66,9 +69,9 @@ const EidCard = forwardRef<HTMLDivElement, EidCardProps>(
                 </p>
               </div>
 
-              {/* Message Box always maintains a strong glassy effect */}
-              <div className={`rounded-xl p-5 border-2 border-dashed ${theme.colors.border} bg-white/80 dark:bg-black/50 backdrop-blur-lg shadow-sm shine-spiritual`}>
-                <p className={`text-sm md:text-base leading-relaxed text-gray-900 dark:text-gray-100 print:text-black whitespace-pre-wrap min-h-[80px] font-bold`}>
+              {/* Message Box — CLEAR, NO blur, solid readable background */}
+              <div className={`rounded-xl p-5 border-2 border-dashed ${theme.colors.border} bg-white/95 dark:bg-gray-900/90 shadow-sm`}>
+                <p className="text-sm md:text-base leading-relaxed text-gray-900 dark:text-gray-100 print:text-black whitespace-pre-wrap min-h-[80px] font-medium">
                   {message || 'May this blessed occasion of Eid bring you joy, peace, and prosperity. May you have a wonderful celebration with your loved ones!'}
                 </p>
               </div>
@@ -81,18 +84,15 @@ const EidCard = forwardRef<HTMLDivElement, EidCardProps>(
               </div>
             </div>
 
-            {/* Bottom Footer Details */}
-            <div className="mt-4 pt-4 border-t-2 border-dashed border-black/10 dark:border-white/10 flex justify-between items-center">
+            {/* Bottom Footer */}
+            <div className="mt-auto pt-4 border-t-2 border-dashed border-black/10 dark:border-white/10 flex justify-between items-center">
               <span className="text-xs font-medium opacity-50 uppercase tracking-widest flex items-center gap-1">
-                <span className="text-sm">{theme.icon}</span> Nostalgic Eid Pro
+                <span className="text-sm">{theme.icon}</span> Eid Wishes Studio
               </span>
               <span className={`text-sm opacity-60 ${theme.colors.text}`}>
                   ✧ ✧ ✧
               </span>
             </div>
-            
-            {/* Watermark/Texture overlay (optional) */}
-            <div className="absolute inset-0 pointer-events-none opacity-5 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
           </div>
         </div>
       </div>
