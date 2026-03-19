@@ -17,16 +17,19 @@ const Index = () => {
       icon: <PenLine className="text-[var(--primary-festive)]" size={28} />,
       title: '💬 Text & Message',
       desc: 'Write heartfelt, personalised messages. Use our AI generator for multilingual greetings or type your own.',
+      path: '/create',
     },
     {
       icon: <Sparkles className="text-[var(--primary-festive)]" size={28} />,
       title: '🖼️ Frame & Theme',
       desc: 'Choose from 46+ stunning card themes — or upload your own photo. Each card is a work of art.',
+      path: '/create',
     },
     {
       icon: <FolderOpen className="text-[var(--primary-festive)]" size={28} />,
       title: '💾 Save & Share',
       desc: 'Your greetings are saved instantly. Download as PNG/JPEG, print, or share across WhatsApp & Facebook.',
+      path: '/greetings',
     },
   ];
 
@@ -246,8 +249,9 @@ const Index = () => {
           {features.map((f, i) => (
             <motion.div
               key={i}
+              onClick={() => navigate(f.path)}
               whileHover={{ scale: 1.03, y: -4 }}
-              className={`rounded-3xl border p-6 text-left transition-all duration-300 ${
+              className={`cursor-pointer rounded-3xl border p-6 text-left transition-all duration-300 ${
                 !isDark ? 'border-orange-100 bg-orange-50/60' : 'border-white/10'
               }`}
               style={{ background: isDark ? 'var(--card-bg)' : undefined }}

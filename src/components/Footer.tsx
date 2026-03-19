@@ -6,7 +6,7 @@ const Footer = () => (
       <span>🕌</span>
     </div>
     <p className="text-sm text-muted-foreground">
-      Developed by <span className="font-semibold text-primary">Softsasi</span>
+      Developed by <span className="font-semibold text-primary">Mati</span>
     </p>
     <p className="text-xs text-muted-foreground mt-1">
       May this Eid bring peace, happiness, and prosperity to all 🌙 ✨
