@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const WelcomePopup = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Show popup every visit (or use localStorage for once-per-session)
@@ -74,7 +76,10 @@ const WelcomePopup = () => {
               <motion.button
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
-                onClick={() => setIsOpen(false)}
+                onClick={() => {
+                  setIsOpen(false);
+                  navigate('/create');
+                }}
                 className="flex-1 py-3 rounded-xl font-bold text-white text-sm shadow-lg transition-all"
                 style={{ background: 'linear-gradient(135deg, #fb923c, #f97316)' }}
               >

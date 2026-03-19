@@ -72,9 +72,12 @@ const CreateGreeting = () => {
   const handleCustomPhotoUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      setCustomBgImage(url);
-      toast.success('Custom photo applied! 📷');
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCustomBgImage(reader.result as string);
+        toast.success('Custom photo applied! 📷');
+      };
+      reader.readAsDataURL(file);
     }
   }, []);
 
@@ -99,6 +102,7 @@ const CreateGreeting = () => {
       frameId: frameTheme,
       cardSize: sizeKey,
       eidType,
+      customBg: customBgImage || undefined,
       createdAt: Date.now(),
     };
     const all = await loadGreetings();

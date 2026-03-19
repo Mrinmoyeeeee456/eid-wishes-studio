@@ -9,6 +9,7 @@ export interface SavedGreeting {
   frameId: string;
   cardSize: string;
   eidType?: 'fitar' | 'azha';
+  customBg?: string;
   createdAt: number;
 }
 

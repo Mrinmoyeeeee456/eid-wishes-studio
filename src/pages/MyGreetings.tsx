@@ -130,6 +130,7 @@ const GreetingItem = ({ greeting, onDelete, onShare }: GreetingItemProps) => {
             size={greeting.cardSize || 'medium'}
             frameId={greeting.frameId as any}
             eidType={greeting.eidType}
+            customBg={greeting.customBg}
           />
       </div>
 
