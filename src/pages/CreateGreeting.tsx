@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Save, Eye, Sparkles, ImagePlus } from 'lucide-react';
 import { toast } from 'sonner';
@@ -23,18 +23,23 @@ const cardSizes = ['Small (300px)', 'Medium (400px)', 'Large (500px)'];
 const allCategories = ['Premium', 'Eid Festive', 'Traditional', 'Elegant', 'Pastel', 'Bold', 'Princesses', 'Cartoons'] as const;
 
 const CreateGreeting = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const editData = location.state?.editData as SavedGreeting | undefined;
+
   const [activeTab, setActiveTab] = useState('content');
-  const [senderName, setSenderName] = useState('');
-  const [recipientName, setRecipientName] = useState('');
-  const [message, setMessage] = useState(getDefaultMessage('fitar'));
-  const [eidType, setEidType] = useState<'fitar' | 'azha'>('fitar');
-  const [cardSize, setCardSize] = useState('Medium (400px)');
-  const [frameTheme, setFrameTheme] = useState<CharacterTheme>('traditional_mosque');
-  const [customBgImage, setCustomBgImage] = useState<string | null>(null);
+  const [senderName, setSenderName] = useState(editData?.senderName || '');
+  const [recipientName, setRecipientName] = useState(editData?.recipientName || '');
+  const [message, setMessage] = useState(editData?.message || getDefaultMessage('fitar'));
+  const [eidType, setEidType] = useState<'fitar' | 'azha'>(editData?.eidType || 'fitar');
   
+  const initialSize = editData?.cardSize === 'small' ? 'Small (300px)' : editData?.cardSize === 'large' ? 'Large (500px)' : 'Medium (400px)';
+  const [cardSize, setCardSize] = useState(initialSize);
+  const [frameTheme, setFrameTheme] = useState<CharacterTheme>((editData?.frameId as CharacterTheme) || 'traditional_mosque');
+  const [customBgImage, setCustomBgImage] = useState<string | null>(editData?.customBg || null);
+
   const cardComponentRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (message === getDefaultMessage('fitar') || message === getDefaultMessage('azha')) {
@@ -119,7 +124,9 @@ const CreateGreeting = () => {
         const link = document.createElement('a');
         link.download = `eid-greeting.${format}`;
         link.href = dataUrl;
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
         toast.success(`Exported as ${format.toUpperCase()}`);
       } catch {
         toast.error('Export failed');
@@ -344,7 +351,7 @@ const CreateGreeting = () => {
               <div className="flex gap-3">
                 <button
                   onClick={handleSave}
-                  className="flex-1 py-3 bg-primary text-primary-foreground rounded-xl font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition"
+                  className="flex-1 py-3 bg-primary text-primary-foreground glass-button rounded-xl font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition"
                 >
                   <Save size={16} /> Save Greeting
                 </button>

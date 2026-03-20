@@ -135,24 +135,24 @@ const StarField = () => {
   return (
     <div
       ref={containerRef}
-      className={`fixed inset-0 pointer-events-none overflow-hidden -z-10 transition-opacity duration-1000 ${isDark ? 'opacity-100' : 'opacity-0'}`}
+      className={`fixed inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-1000 ${isDark ? 'opacity-100' : 'opacity-0'}`}
       aria-hidden="true"
     >
       {/* Shiny Moons (Multiple sizes for depth) */}
       {isDark && (
         <>
-          <div className="absolute top-12 right-12 w-24 h-24 text-amber-50 drop-shadow-[0_0_80px_rgba(251,191,36,0.6)] opacity-90 scale-110">
+          <div className="absolute top-12 right-12 w-32 h-32 text-amber-50 drop-shadow-[0_0_80px_rgba(251,191,36,0.8)] opacity-100 scale-125">
               <LaughingMoon className="w-full h-full" />
           </div>
           
-          <div className="absolute bottom-20 left-10 w-12 h-12 text-amber-100 drop-shadow-[0_0_40px_rgba(251,191,36,0.4)] opacity-40 blur-[1px]">
+          <div className="absolute bottom-20 left-10 w-20 h-20 text-amber-100 drop-shadow-[0_0_60px_rgba(251,191,36,0.6)] opacity-70 blur-[1px]">
                <LaughingMoon className="w-full h-full rotate-45" />
           </div>
 
-          <div className="absolute top-1/3 left-1/4 w-4 h-4 rounded-full bg-white shadow-[0_0_20px_white] opacity-60 animate-pulse" />
+          <div className="absolute top-1/3 left-1/4 w-8 h-8 rounded-full bg-white shadow-[0_0_40px_white] opacity-80 animate-pulse" />
           <div 
-            className="absolute bottom-1/3 right-1/3 w-6 h-6 rounded-full bg-amber-200 shadow-[0_0_25px_rgba(251,191,36,0.5)] opacity-50 animate-bounce transition-all" 
-            style={{ animationDuration: '5s', transitionDuration: '5s' }}
+            className="absolute bottom-1/3 right-1/3 w-10 h-10 rounded-full bg-amber-200 shadow-[0_0_45px_rgba(251,191,36,0.7)] opacity-80 animate-bounce transition-all" 
+            style={{ animationDuration: '4s', transitionDuration: '4s' }}
           />
         </>
       )}

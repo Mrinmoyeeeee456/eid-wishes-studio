@@ -102,7 +102,7 @@ export const PeachDecorations = () => {
       <HangingDecoration className="right-[10%]" height={150} delay={0.4} />
       <HangingDecoration className="right-[22%] opacity-50" height={110} delay={1.0} />
 
-      {/* ── Scattered Floating Hearts & Stars ── */}
+      {/* ── Scattered Floating Hearts, Stars, Flowers & Birds ── */}
       <FloatingElement className="top-[18%] left-[8%]  text-2xl" delay={0.4}>💕</FloatingElement>
       <FloatingElement className="top-[28%] right-[12%] text-xl"  delay={1.1}>✨</FloatingElement>
       <FloatingElement className="top-[55%] left-[6%]  text-xl"  delay={1.8}>🌸</FloatingElement>
@@ -111,7 +111,14 @@ export const PeachDecorations = () => {
       <FloatingElement className="bottom-[20%] right-[9%]  text-xl" delay={1.5}>💕</FloatingElement>
       <FloatingElement className="top-[70%] left-[3%]  text-sm"  delay={3.0}>✨</FloatingElement>
       <FloatingElement className="top-[65%] right-[4%] text-lg"  delay={2.5}>🌙</FloatingElement>
-
+      
+      {/* ── Festive Birds & Additional Flowers ── */}
+      <FloatingElement className="top-[15%] right-[20%] text-2xl" delay={0.3}>🕊️</FloatingElement>
+      <FloatingElement className="bottom-[40%] right-[15%] text-2xl" delay={1.4}>🌺</FloatingElement>
+      <FloatingElement className="top-[50%] left-[20%] text-2xl" delay={0.9}>🌷</FloatingElement>
+      <FloatingElement className="bottom-[25%] left-[10%] text-2xl" delay={2.1}>🕊️</FloatingElement>
+      <FloatingElement className="top-[10%] left-[30%] text-2xl" delay={0.5}>🌻</FloatingElement>
+      
       {/* Ambient background glows */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-100/25 blur-[120px] rounded-full -z-10" />
       <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-teal-50/15 blur-[150px] rounded-full -z-10" />

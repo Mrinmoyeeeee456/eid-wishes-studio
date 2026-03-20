@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Share2 } from 'lucide-react';
+import { Plus, Trash2, Share2, PenLine } from 'lucide-react';
 import { toast } from 'sonner';
 import { toPng, toJpeg } from 'html-to-image';
 import EidCard from '@/components/EidCard';
@@ -30,10 +30,20 @@ const MyGreetings = () => {
     toast('Greeting deleted');
   }, []);
 
-  const handleShare = useCallback(async (g: SavedGreeting) => {
+  const handleShare = useCallback(async (g: SavedGreeting, dataUrl?: string) => {
     const text = `Eid Mubarak! 🌙\nTo: ${g.recipientName}\n${g.message}\nFrom: ${g.senderName}`;
     if (navigator.share) {
       try {
+        if (dataUrl) {
+          try {
+            const blob = await (await fetch(dataUrl)).blob();
+            const file = new File([blob], 'eid-greeting.png', { type: 'image/png' });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              await navigator.share({ title: 'Eid Mubarak', text, files: [file] });
+              return;
+            }
+          } catch(e) { console.warn('Native image share unavail/failed', e); }
+        }
         await navigator.share({ title: 'Eid Mubarak', text });
       } catch { /* cancelled */ }
     } else {
@@ -74,6 +84,7 @@ const MyGreetings = () => {
                   greeting={g}
                   onDelete={handleDelete}
                   onShare={handleShare}
+                  onEdit={(greeting) => navigate('/create', { state: { editData: greeting } })}
                 />
               ))}
             </AnimatePresence>
@@ -89,10 +100,11 @@ const MyGreetings = () => {
 interface GreetingItemProps {
   greeting: SavedGreeting;
   onDelete: (id: string) => void;
-  onShare: (g: SavedGreeting) => void;
+  onShare: (g: SavedGreeting, dataUrl?: string) => void;
+  onEdit: (g: SavedGreeting) => void;
 }
 
-const GreetingItem = ({ greeting, onDelete, onShare }: GreetingItemProps) => {
+const GreetingItem = ({ greeting, onDelete, onShare, onEdit }: GreetingItemProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const exportImage = useCallback(
@@ -104,7 +116,9 @@ const GreetingItem = ({ greeting, onDelete, onShare }: GreetingItemProps) => {
         const link = document.createElement('a');
         link.download = `eid-greeting.${format}`;
         link.href = dataUrl;
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
         toast.success(`Exported as ${format.toUpperCase()}`);
       } catch {
         toast.error('Export failed');
@@ -137,14 +151,31 @@ const GreetingItem = ({ greeting, onDelete, onShare }: GreetingItemProps) => {
       {/* Actions */}
       <div className="flex gap-2">
         <button
-          onClick={() => onShare(greeting)}
-          className="flex-1 py-2.5 border border-border rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary transition flex items-center justify-center gap-2"
+          onClick={async () => {
+             if (!cardRef.current) { onShare(greeting); return; }
+             toast.loading('Generating image for share...', { id: 'share' });
+             try {
+               const dataUrl = await toPng(cardRef.current, { quality: 0.95, pixelRatio: 2 });
+               toast.dismiss('share');
+               onShare(greeting, dataUrl);
+             } catch {
+               toast.dismiss('share');
+               onShare(greeting);
+             }
+          }}
+          className="flex-1 py-2 border border-border rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary transition flex items-center justify-center gap-2 glass-button"
         >
           <Share2 size={14} /> Share
         </button>
         <button
+          onClick={() => onEdit(greeting)}
+          className="flex-1 py-2 border border-border rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary transition flex items-center justify-center gap-2 glass-button"
+        >
+          <PenLine size={14} /> Edit
+        </button>
+        <button
           onClick={() => onDelete(greeting.id)}
-          className="p-2.5 border border-border rounded-lg text-destructive hover:bg-destructive/10 transition"
+          className="p-2.5 border border-border rounded-lg text-destructive hover:bg-destructive/10 transition glass-button"
         >
           <Trash2 size={14} />
         </button>
@@ -152,13 +183,13 @@ const GreetingItem = ({ greeting, onDelete, onShare }: GreetingItemProps) => {
       <div className="flex gap-2">
         <button
           onClick={() => exportImage('png')}
-          className="flex-1 py-2 border border-border rounded-lg text-sm text-muted-foreground hover:text-primary hover:border-primary transition flex items-center justify-center gap-2"
+          className="flex-1 py-2 border border-border rounded-lg text-sm text-muted-foreground hover:text-primary hover:border-primary transition flex items-center justify-center gap-2 glass-button"
         >
           ⬇ PNG
         </button>
         <button
           onClick={() => exportImage('jpeg')}
-          className="flex-1 py-2 border border-border rounded-lg text-sm text-muted-foreground hover:text-primary hover:border-primary transition flex items-center justify-center gap-2"
+          className="flex-1 py-2 border border-border rounded-lg text-sm text-muted-foreground hover:text-primary hover:border-primary transition flex items-center justify-center gap-2 glass-button"
         >
           ⬇ JPEG
         </button>

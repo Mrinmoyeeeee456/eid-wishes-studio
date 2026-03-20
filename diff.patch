@@ -1,0 +1,337 @@
+diff --git a/src/components/EidCard.tsx b/src/components/EidCard.tsx
+index 1e4f643..be64292 100644
+--- a/src/components/EidCard.tsx
++++ b/src/components/EidCard.tsx
+@@ -28,7 +28,7 @@ const EidCard = forwardRef<HTMLDivElement, EidCardProps>(
+     return (
+       <div ref={ref} id="printable-eid-card" className={`${widthClass} w-full mx-auto p-2 bg-transparent print:p-0 print:m-0`}>
+         <div 
+-          className={`relative overflow-hidden rounded-2xl border-4 ${theme.colors.border} text-center shadow-xl flex flex-col`}
++          className={`relative overflow-hidden rounded-2xl border-4 ${theme.colors.border} text-center shadow-xl flex flex-col glass-card glass-pulse`}
+           style={{
+             backgroundImage: bgImageUrl ? `url(${bgImageUrl})` : undefined,
+             backgroundSize: 'cover',
+diff --git a/src/components/PeachDecorations.tsx b/src/components/PeachDecorations.tsx
+index fb32030..27fbcd6 100644
+--- a/src/components/PeachDecorations.tsx
++++ b/src/components/PeachDecorations.tsx
+@@ -102,7 +102,7 @@ export const PeachDecorations = () => {
+       <HangingDecoration className="right-[10%]" height={150} delay={0.4} />
+       <HangingDecoration className="right-[22%] opacity-50" height={110} delay={1.0} />
+ 
+-      {/* ── Scattered Floating Hearts & Stars ── */}
++      {/* ── Scattered Floating Hearts, Stars, Flowers & Birds ── */}
+       <FloatingElement className="top-[18%] left-[8%]  text-2xl" delay={0.4}>💕</FloatingElement>
+       <FloatingElement className="top-[28%] right-[12%] text-xl"  delay={1.1}>✨</FloatingElement>
+       <FloatingElement className="top-[55%] left-[6%]  text-xl"  delay={1.8}>🌸</FloatingElement>
+@@ -111,7 +111,14 @@ export const PeachDecorations = () => {
+       <FloatingElement className="bottom-[20%] right-[9%]  text-xl" delay={1.5}>💕</FloatingElement>
+       <FloatingElement className="top-[70%] left-[3%]  text-sm"  delay={3.0}>✨</FloatingElement>
+       <FloatingElement className="top-[65%] right-[4%] text-lg"  delay={2.5}>🌙</FloatingElement>
+-
++      
++      {/* ── Festive Birds & Additional Flowers ── */}
++      <FloatingElement className="top-[15%] right-[20%] text-2xl" delay={0.3}>🕊️</FloatingElement>
++      <FloatingElement className="bottom-[40%] right-[15%] text-2xl" delay={1.4}>🌺</FloatingElement>
++      <FloatingElement className="top-[50%] left-[20%] text-2xl" delay={0.9}>🌷</FloatingElement>
++      <FloatingElement className="bottom-[25%] left-[10%] text-2xl" delay={2.1}>🕊️</FloatingElement>
++      <FloatingElement className="top-[10%] left-[30%] text-2xl" delay={0.5}>🌻</FloatingElement>
++      
+       {/* Ambient background glows */}
+       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-100/25 blur-[120px] rounded-full -z-10" />
+       <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-teal-50/15 blur-[150px] rounded-full -z-10" />
+diff --git a/src/components/StarField.tsx b/src/components/StarField.tsx
+index 2ec6f9e..36f513c 100644
+--- a/src/components/StarField.tsx
++++ b/src/components/StarField.tsx
+@@ -135,24 +135,24 @@ const StarField = () => {
+   return (
+     <div
+       ref={containerRef}
+-      className={`fixed inset-0 pointer-events-none overflow-hidden -z-10 transition-opacity duration-1000 ${isDark ? 'opacity-100' : 'opacity-0'}`}
++      className={`fixed inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-1000 ${isDark ? 'opacity-100' : 'opacity-0'}`}
+       aria-hidden="true"
+     >
+       {/* Shiny Moons (Multiple sizes for depth) */}
+       {isDark && (
+         <>
+-          <div className="absolute top-12 right-12 w-24 h-24 text-amber-50 drop-shadow-[0_0_80px_rgba(251,191,36,0.6)] opacity-90 scale-110">
++          <div className="absolute top-12 right-12 w-32 h-32 text-amber-50 drop-shadow-[0_0_80px_rgba(251,191,36,0.8)] opacity-100 scale-125">
+               <LaughingMoon className="w-full h-full" />
+           </div>
+           
+-          <div className="absolute bottom-20 left-10 w-12 h-12 text-amber-100 drop-shadow-[0_0_40px_rgba(251,191,36,0.4)] opacity-40 blur-[1px]">
++          <div className="absolute bottom-20 left-10 w-20 h-20 text-amber-100 drop-shadow-[0_0_60px_rgba(251,191,36,0.6)] opacity-70 blur-[1px]">
+                <LaughingMoon className="w-full h-full rotate-45" />
+           </div>
+ 
+-          <div className="absolute top-1/3 left-1/4 w-4 h-4 rounded-full bg-white shadow-[0_0_20px_white] opacity-60 animate-pulse" />
++          <div className="absolute top-1/3 left-1/4 w-8 h-8 rounded-full bg-white shadow-[0_0_40px_white] opacity-80 animate-pulse" />
+           <div 
+-            className="absolute bottom-1/3 right-1/3 w-6 h-6 rounded-full bg-amber-200 shadow-[0_0_25px_rgba(251,191,36,0.5)] opacity-50 animate-bounce transition-all" 
+-            style={{ animationDuration: '5s', transitionDuration: '5s' }}
++            className="absolute bottom-1/3 right-1/3 w-10 h-10 rounded-full bg-amber-200 shadow-[0_0_45px_rgba(251,191,36,0.7)] opacity-80 animate-bounce transition-all" 
++            style={{ animationDuration: '4s', transitionDuration: '4s' }}
+           />
+         </>
+       )}
+diff --git a/src/pages/CreateGreeting.tsx b/src/pages/CreateGreeting.tsx
+index 8c82905..42ceac2 100644
+--- a/src/pages/CreateGreeting.tsx
++++ b/src/pages/CreateGreeting.tsx
+@@ -1,5 +1,5 @@
+ import { useState, useRef, useCallback, useEffect } from 'react';
+-import { useNavigate } from 'react-router-dom';
++import { useNavigate, useLocation } from 'react-router-dom';
+ import { motion } from 'framer-motion';
+ import { Save, Eye, Sparkles, ImagePlus } from 'lucide-react';
+ import { toast } from 'sonner';
+@@ -23,18 +23,23 @@ const cardSizes = ['Small (300px)', 'Medium (400px)', 'Large (500px)'];
+ const allCategories = ['Premium', 'Eid Festive', 'Traditional', 'Elegant', 'Pastel', 'Bold', 'Princesses', 'Cartoons'] as const;
+ 
+ const CreateGreeting = () => {
++  const navigate = useNavigate();
++  const location = useLocation();
++  const editData = location.state?.editData as SavedGreeting | undefined;
++
+   const [activeTab, setActiveTab] = useState('content');
+-  const [senderName, setSenderName] = useState('');
+-  const [recipientName, setRecipientName] = useState('');
+-  const [message, setMessage] = useState(getDefaultMessage('fitar'));
+-  const [eidType, setEidType] = useState<'fitar' | 'azha'>('fitar');
+-  const [cardSize, setCardSize] = useState('Medium (400px)');
+-  const [frameTheme, setFrameTheme] = useState<CharacterTheme>('traditional_mosque');
+-  const [customBgImage, setCustomBgImage] = useState<string | null>(null);
++  const [senderName, setSenderName] = useState(editData?.senderName || '');
++  const [recipientName, setRecipientName] = useState(editData?.recipientName || '');
++  const [message, setMessage] = useState(editData?.message || getDefaultMessage('fitar'));
++  const [eidType, setEidType] = useState<'fitar' | 'azha'>(editData?.eidType || 'fitar');
+   
++  const initialSize = editData?.cardSize === 'small' ? 'Small (300px)' : editData?.cardSize === 'large' ? 'Large (500px)' : 'Medium (400px)';
++  const [cardSize, setCardSize] = useState(initialSize);
++  const [frameTheme, setFrameTheme] = useState<CharacterTheme>((editData?.frameId as CharacterTheme) || 'traditional_mosque');
++  const [customBgImage, setCustomBgImage] = useState<string | null>(editData?.customBg || null);
++
+   const cardComponentRef = useRef<HTMLDivElement>(null);
+   const fileInputRef = useRef<HTMLInputElement>(null);
+-  const navigate = useNavigate();
+ 
+   useEffect(() => {
+     if (message === getDefaultMessage('fitar') || message === getDefaultMessage('azha')) {
+@@ -119,7 +124,9 @@ const CreateGreeting = () => {
+         const link = document.createElement('a');
+         link.download = `eid-greeting.${format}`;
+         link.href = dataUrl;
++        document.body.appendChild(link);
+         link.click();
++        document.body.removeChild(link);
+         toast.success(`Exported as ${format.toUpperCase()}`);
+       } catch {
+         toast.error('Export failed');
+@@ -344,7 +351,7 @@ const CreateGreeting = () => {
+               <div className="flex gap-3">
+                 <button
+                   onClick={handleSave}
+-                  className="flex-1 py-3 bg-primary text-primary-foreground rounded-xl font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition"
++                  className="flex-1 py-3 bg-primary text-primary-foreground glass-button rounded-xl font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition"
+                 >
+                   <Save size={16} /> Save Greeting
+                 </button>
+diff --git a/src/pages/Index.tsx b/src/pages/Index.tsx
+index 8423176..02880a9 100644
+--- a/src/pages/Index.tsx
++++ b/src/pages/Index.tsx
+@@ -1,7 +1,7 @@
+ import { useEffect } from 'react';
+ import { useNavigate } from 'react-router-dom';
+ import { motion } from 'framer-motion';
+-import { PenLine, Sparkles, FolderOpen } from 'lucide-react';
++import { PenLine, Sparkles, FolderOpen, Bird } from 'lucide-react';
+ import gsap from 'gsap';
+ import Footer from '@/components/Footer';
+ import { useThemeStore } from '@/store/themeStore';
+@@ -35,22 +35,36 @@ const Index = () => {
+ 
+   useEffect(() => {
+     const tl = gsap.timeline();
+-    tl.to('.gate-left', { x: '-100%', duration: 1.8, ease: 'power3.inOut' }, 0.5)
+-      .to('.gate-right', { x: '100%', duration: 1.8, ease: 'power3.inOut' }, 0.5)
+-      .to('.gate-container', { autoAlpha: 0, duration: 0.5 }, '-=0.5')
+-      .set('.gate-container', { display: 'none' });
++    // Scatter the birds randomly from left/bottom to top/right
++    gsap.utils.toArray('.bird-anim').forEach((bird: any, i) => {
++      tl.fromTo(bird, 
++        { x: -100, y: window.innerHeight + 100, opacity: 0, scale: 0.5 },
++        { 
++          x: window.innerWidth + 100, 
++          y: -100 - (Math.random() * 200), 
++          opacity: 1, 
++          scale: Math.random() * 1.5 + 0.8,
++          duration: Math.random() * 2 + 2, 
++          ease: 'power2.out',
++          delay: Math.random() * 0.5
++        },
++        0
++      );
++    });
++    
++    tl.to('.birds-container', { autoAlpha: 0, duration: 0.5 }, '+=1')
++      .set('.birds-container', { display: 'none' });
+   }, []);
+ 
+   return (
+     <div className="min-h-screen relative overflow-hidden">
+-      {/* GSAP Celestial Gate */}
+-      <div className="gate-container fixed inset-0 z-50 pointer-events-none flex">
+-        <div className="gate-left w-1/2 h-full bg-[var(--background)] border-r-4 border-[var(--primary-festive)] flex items-center justify-end pr-4 shadow-[10px_0_30px_rgba(0,0,0,0.5)]">
+-          <Sparkles className="text-[var(--primary-festive)] opacity-50" size={48} />
+-        </div>
+-        <div className="gate-right w-1/2 h-full bg-[var(--background)] border-l-4 border-[var(--primary-festive)] flex items-center justify-start pl-4 shadow-[-10px_0_30px_rgba(0,0,0,0.5)]">
+-          <Sparkles className="text-[var(--primary-festive)] opacity-50" size={48} />
+-        </div>
++      {/* Intro Bird Animation */}
++      <div className="birds-container fixed inset-0 z-[100] pointer-events-none">
++        {[...Array(15)].map((_, i) => (
++          <div key={i} className="bird-anim absolute text-[var(--primary-festive)] drop-shadow-md">
++            <Bird size={Math.random() * 20 + 20} className="animate-pulse" />
++          </div>
++        ))}
+       </div>
+ 
+       {/* ── Hero ── */}
+@@ -278,7 +292,7 @@ const Index = () => {
+             onClick={() => navigate('/create')}
+             whileHover={{ scale: 1.06 }}
+             whileTap={{ scale: 0.96 }}
+-            className="w-full sm:w-auto px-12 py-5 rounded-2xl font-black text-lg shadow-2xl transition-all duration-200 flex items-center justify-center gap-3 text-white"
++            className="w-full sm:w-auto px-12 py-5 rounded-2xl font-black text-lg shadow-2xl transition-all duration-200 flex items-center justify-center gap-3 text-white glass-button"
+             style={{ background: 'linear-gradient(135deg, var(--primary-festive), #e879f9)', boxShadow: '0 8px 32px rgba(251,146,60,0.4)' }}
+           >
+             <Sparkles size={22} /> ✏️ Create a Wish
+@@ -287,7 +301,7 @@ const Index = () => {
+             onClick={() => navigate('/greetings')}
+             whileHover={{ scale: 1.06 }}
+             whileTap={{ scale: 0.96 }}
+-            className="w-full sm:w-auto px-12 py-5 rounded-2xl font-black text-lg border-2 transition-all duration-200 flex items-center justify-center gap-3"
++            className="w-full sm:w-auto px-12 py-5 rounded-2xl font-black text-lg border-2 transition-all duration-200 flex items-center justify-center gap-3 glass-button"
+             style={{
+               borderColor: 'var(--primary-festive)',
+               color: 'var(--primary-festive)',
+diff --git a/src/pages/MyGreetings.tsx b/src/pages/MyGreetings.tsx
+index b6bbad4..f514955 100644
+--- a/src/pages/MyGreetings.tsx
++++ b/src/pages/MyGreetings.tsx
+@@ -1,7 +1,7 @@
+ import { useState, useRef, useCallback, useEffect } from 'react';
+ import { useNavigate } from 'react-router-dom';
+ import { motion, AnimatePresence } from 'framer-motion';
+-import { Plus, Trash2, Share2 } from 'lucide-react';
++import { Plus, Trash2, Share2, PenLine } from 'lucide-react';
+ import { toast } from 'sonner';
+ import { toPng, toJpeg } from 'html-to-image';
+ import EidCard from '@/components/EidCard';
+@@ -30,10 +30,20 @@ const MyGreetings = () => {
+     toast('Greeting deleted');
+   }, []);
+ 
+-  const handleShare = useCallback(async (g: SavedGreeting) => {
++  const handleShare = useCallback(async (g: SavedGreeting, dataUrl?: string) => {
+     const text = `Eid Mubarak! 🌙\nTo: ${g.recipientName}\n${g.message}\nFrom: ${g.senderName}`;
+     if (navigator.share) {
+       try {
++        if (dataUrl) {
++          try {
++            const blob = await (await fetch(dataUrl)).blob();
++            const file = new File([blob], 'eid-greeting.png', { type: 'image/png' });
++            if (navigator.canShare && navigator.canShare({ files: [file] })) {
++              await navigator.share({ title: 'Eid Mubarak', text, files: [file] });
++              return;
++            }
++          } catch(e) { console.warn('Native image share unavail/failed', e); }
++        }
+         await navigator.share({ title: 'Eid Mubarak', text });
+       } catch { /* cancelled */ }
+     } else {
+@@ -74,6 +84,7 @@ const MyGreetings = () => {
+                   greeting={g}
+                   onDelete={handleDelete}
+                   onShare={handleShare}
++                  onEdit={(greeting) => navigate('/create', { state: { editData: greeting } })}
+                 />
+               ))}
+             </AnimatePresence>
+@@ -89,10 +100,11 @@ const MyGreetings = () => {
+ interface GreetingItemProps {
+   greeting: SavedGreeting;
+   onDelete: (id: string) => void;
+-  onShare: (g: SavedGreeting) => void;
++  onShare: (g: SavedGreeting, dataUrl?: string) => void;
++  onEdit: (g: SavedGreeting) => void;
+ }
+ 
+-const GreetingItem = ({ greeting, onDelete, onShare }: GreetingItemProps) => {
++const GreetingItem = ({ greeting, onDelete, onShare, onEdit }: GreetingItemProps) => {
+   const cardRef = useRef<HTMLDivElement>(null);
+ 
+   const exportImage = useCallback(
+@@ -104,7 +116,9 @@ const GreetingItem = ({ greeting, onDelete, onShare }: GreetingItemProps) => {
+         const link = document.createElement('a');
+         link.download = `eid-greeting.${format}`;
+         link.href = dataUrl;
++        document.body.appendChild(link);
+         link.click();
++        document.body.removeChild(link);
+         toast.success(`Exported as ${format.toUpperCase()}`);
+       } catch {
+         toast.error('Export failed');
+@@ -137,14 +151,31 @@ const GreetingItem = ({ greeting, onDelete, onShare }: GreetingItemProps) => {
+       {/* Actions */}
+       <div className="flex gap-2">
+         <button
+-          onClick={() => onShare(greeting)}
+-          className="flex-1 py-2.5 border border-border rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary transition flex items-center justify-center gap-2"
++          onClick={async () => {
++             if (!cardRef.current) { onShare(greeting); return; }
++             toast.loading('Generating image for share...', { id: 'share' });
++             try {
++               const dataUrl = await toPng(cardRef.current, { quality: 0.95, pixelRatio: 2 });
++               toast.dismiss('share');
++               onShare(greeting, dataUrl);
++             } catch {
++               toast.dismiss('share');
++               onShare(greeting);
++             }
++          }}
++          className="flex-1 py-2 border border-border rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary transition flex items-center justify-center gap-2 glass-button"
+         >
+           <Share2 size={14} /> Share
+         </button>
++        <button
++          onClick={() => onEdit(greeting)}
++          className="flex-1 py-2 border border-border rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary transition flex items-center justify-center gap-2 glass-button"
++        >
++          <PenLine size={14} /> Edit
++        </button>
+         <button
+           onClick={() => onDelete(greeting.id)}
+-          className="p-2.5 border border-border rounded-lg text-destructive hover:bg-destructive/10 transition"
++          className="p-2.5 border border-border rounded-lg text-destructive hover:bg-destructive/10 transition glass-button"
+         >
+           <Trash2 size={14} />
+         </button>
+@@ -152,13 +183,13 @@ const GreetingItem = ({ greeting, onDelete, onShare }: GreetingItemProps) => {
+       <div className="flex gap-2">
+         <button
+           onClick={() => exportImage('png')}
+-          className="flex-1 py-2 border border-border rounded-lg text-sm text-muted-foreground hover:text-primary hover:border-primary transition flex items-center justify-center gap-2"
++          className="flex-1 py-2 border border-border rounded-lg text-sm text-muted-foreground hover:text-primary hover:border-primary transition flex items-center justify-center gap-2 glass-button"
+         >
+           ⬇ PNG
+         </button>
+         <button
+           onClick={() => exportImage('jpeg')}
+-          className="flex-1 py-2 border border-border rounded-lg text-sm text-muted-foreground hover:text-primary hover:border-primary transition flex items-center justify-center gap-2"
++          className="flex-1 py-2 border border-border rounded-lg text-sm text-muted-foreground hover:text-primary hover:border-primary transition flex items-center justify-center gap-2 glass-button"
+         >
+           ⬇ JPEG
+         </button>

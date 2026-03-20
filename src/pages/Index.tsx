@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { PenLine, Sparkles, FolderOpen } from 'lucide-react';
+import { PenLine, Sparkles, FolderOpen, Bird } from 'lucide-react';
 import gsap from 'gsap';
 import Footer from '@/components/Footer';
 import { useThemeStore } from '@/store/themeStore';
@@ -35,22 +35,36 @@ const Index = () => {
 
   useEffect(() => {
     const tl = gsap.timeline();
-    tl.to('.gate-left', { x: '-100%', duration: 1.8, ease: 'power3.inOut' }, 0.5)
-      .to('.gate-right', { x: '100%', duration: 1.8, ease: 'power3.inOut' }, 0.5)
-      .to('.gate-container', { autoAlpha: 0, duration: 0.5 }, '-=0.5')
-      .set('.gate-container', { display: 'none' });
+    // Scatter the birds randomly from left/bottom to top/right
+    gsap.utils.toArray('.bird-anim').forEach((bird: any, i) => {
+      tl.fromTo(bird, 
+        { x: -100, y: window.innerHeight + 100, opacity: 0, scale: 0.5 },
+        { 
+          x: window.innerWidth + 100, 
+          y: -100 - (Math.random() * 200), 
+          opacity: 1, 
+          scale: Math.random() * 1.5 + 0.8,
+          duration: Math.random() * 2 + 2, 
+          ease: 'power2.out',
+          delay: Math.random() * 0.5
+        },
+        0
+      );
+    });
+    
+    tl.to('.birds-container', { autoAlpha: 0, duration: 0.5 }, '+=1')
+      .set('.birds-container', { display: 'none' });
   }, []);
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* GSAP Celestial Gate */}
-      <div className="gate-container fixed inset-0 z-50 pointer-events-none flex">
-        <div className="gate-left w-1/2 h-full bg-[var(--background)] border-r-4 border-[var(--primary-festive)] flex items-center justify-end pr-4 shadow-[10px_0_30px_rgba(0,0,0,0.5)]">
-          <Sparkles className="text-[var(--primary-festive)] opacity-50" size={48} />
-        </div>
-        <div className="gate-right w-1/2 h-full bg-[var(--background)] border-l-4 border-[var(--primary-festive)] flex items-center justify-start pl-4 shadow-[-10px_0_30px_rgba(0,0,0,0.5)]">
-          <Sparkles className="text-[var(--primary-festive)] opacity-50" size={48} />
-        </div>
+      {/* Intro Bird Animation */}
+      <div className="birds-container fixed inset-0 z-[100] pointer-events-none">
+        {[...Array(15)].map((_, i) => (
+          <div key={i} className="bird-anim absolute text-[var(--primary-festive)] drop-shadow-md">
+            <Bird size={Math.random() * 20 + 20} className="animate-pulse" />
+          </div>
+        ))}
       </div>
 
       {/* ── Hero ── */}
@@ -278,7 +292,7 @@ const Index = () => {
             onClick={() => navigate('/create')}
             whileHover={{ scale: 1.06 }}
             whileTap={{ scale: 0.96 }}
-            className="w-full sm:w-auto px-12 py-5 rounded-2xl font-black text-lg shadow-2xl transition-all duration-200 flex items-center justify-center gap-3 text-white"
+            className="w-full sm:w-auto px-12 py-5 rounded-2xl font-black text-lg shadow-2xl transition-all duration-200 flex items-center justify-center gap-3 text-white glass-button"
             style={{ background: 'linear-gradient(135deg, var(--primary-festive), #e879f9)', boxShadow: '0 8px 32px rgba(251,146,60,0.4)' }}
           >
             <Sparkles size={22} /> ✏️ Create a Wish
@@ -287,7 +301,7 @@ const Index = () => {
             onClick={() => navigate('/greetings')}
             whileHover={{ scale: 1.06 }}
             whileTap={{ scale: 0.96 }}
-            className="w-full sm:w-auto px-12 py-5 rounded-2xl font-black text-lg border-2 transition-all duration-200 flex items-center justify-center gap-3"
+            className="w-full sm:w-auto px-12 py-5 rounded-2xl font-black text-lg border-2 transition-all duration-200 flex items-center justify-center gap-3 glass-button"
             style={{
               borderColor: 'var(--primary-festive)',
               color: 'var(--primary-festive)',

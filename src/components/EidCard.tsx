@@ -28,7 +28,7 @@ const EidCard = forwardRef<HTMLDivElement, EidCardProps>(
     return (
       <div ref={ref} id="printable-eid-card" className={`${widthClass} w-full mx-auto p-2 bg-transparent print:p-0 print:m-0`}>
         <div 
-          className={`relative overflow-hidden rounded-2xl border-4 ${theme.colors.border} text-center shadow-xl flex flex-col`}
+          className={`relative overflow-hidden rounded-2xl border-4 ${theme.colors.border} text-center shadow-xl flex flex-col glass-card glass-pulse`}
           style={{
             backgroundImage: bgImageUrl ? `url(${bgImageUrl})` : undefined,
             backgroundSize: 'cover',
