@@ -79,8 +79,27 @@ const CreateGreeting = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setCustomBgImage(reader.result as string);
-        toast.success('Custom photo applied! 📷');
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let { width, height } = img;
+          const MAX_DIM = 800;
+          if (width > height && width > MAX_DIM) {
+            height *= MAX_DIM / width;
+            width = MAX_DIM;
+          } else if (height > MAX_DIM) {
+            width *= MAX_DIM / height;
+            height = MAX_DIM;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+          setCustomBgImage(compressedDataUrl);
+          toast.success('Custom photo applied! 📷');
+        };
+        img.src = reader.result as string;
       };
       reader.readAsDataURL(file);
     }
@@ -110,10 +129,14 @@ const CreateGreeting = () => {
       customBg: customBgImage || undefined,
       createdAt: Date.now(),
     };
-    const all = await loadGreetings();
-    await saveGreetings([greeting, ...all]);
-    toast.success('Greeting saved! 🌙');
-  }, [recipientName, senderName, message, sizeKey, frameTheme, eidType]);
+    try {
+      const all = await loadGreetings();
+      await saveGreetings([greeting, ...all]);
+      toast.success('Greeting saved! 🌙');
+    } catch (err: any) {
+      toast.error(err.message || 'Storage full! Please delete some old greetings.');
+    }
+  }, [recipientName, senderName, message, sizeKey, frameTheme, eidType, customBgImage]);
 
   const exportImage = useCallback(
     async (format: 'png' | 'jpeg') => {

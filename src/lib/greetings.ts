@@ -30,6 +30,7 @@ const saveToLocal = (greetings: SavedGreeting[]) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(greetings));
   } catch (e) {
     console.error('LocalStorage save error:', e);
+    throw new Error('Local storage full. Please delete some saved greetings.');
   }
 };
 
