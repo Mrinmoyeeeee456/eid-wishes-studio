@@ -53,7 +53,13 @@ const MyGreetings = () => {
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <motion.div 
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ duration: 0.4 }}
+      className="min-h-screen"
+    >
       <main className="max-w-5xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-display font-bold text-foreground">
@@ -93,7 +99,7 @@ const MyGreetings = () => {
 
         <Footer />
       </main>
-    </div>
+    </motion.div>
   );
 };
 
@@ -110,9 +116,15 @@ const GreetingItem = ({ greeting, onDelete, onShare, onEdit }: GreetingItemProps
   const exportImage = useCallback(
     async (format: 'png' | 'jpeg') => {
       if (!cardRef.current) return;
+      document.body.classList.add('exporting');
       try {
         const fn = format === 'png' ? toPng : toJpeg;
-        const dataUrl = await fn(cardRef.current, { quality: 0.95, pixelRatio: 2 });
+        const dataUrl = await fn(cardRef.current, { 
+          quality: 1.0, 
+          pixelRatio: 2,
+          skipFonts: false,
+          style: { transform: 'none' }
+        });
         const link = document.createElement('a');
         link.download = `eid-greeting.${format}`;
         link.href = dataUrl;
@@ -122,6 +134,8 @@ const GreetingItem = ({ greeting, onDelete, onShare, onEdit }: GreetingItemProps
         toast.success(`Exported as ${format.toUpperCase()}`);
       } catch {
         toast.error('Export failed');
+      } finally {
+        document.body.classList.remove('exporting');
       }
     },
     []
@@ -154,13 +168,21 @@ const GreetingItem = ({ greeting, onDelete, onShare, onEdit }: GreetingItemProps
           onClick={async () => {
              if (!cardRef.current) { onShare(greeting); return; }
              toast.loading('Generating image for share...', { id: 'share' });
+             document.body.classList.add('exporting');
              try {
-               const dataUrl = await toPng(cardRef.current, { quality: 0.95, pixelRatio: 2 });
+               const dataUrl = await toPng(cardRef.current, { 
+                 quality: 1.0, 
+                 pixelRatio: 2, 
+                 skipFonts: false,
+                 style: { transform: 'none' } 
+               });
                toast.dismiss('share');
                onShare(greeting, dataUrl);
              } catch {
                toast.dismiss('share');
                onShare(greeting);
+             } finally {
+               document.body.classList.remove('exporting');
              }
           }}
           className="flex-1 py-2 border border-border rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary transition flex items-center justify-center gap-2 glass-button"

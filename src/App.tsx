@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { MotionConfig } from "framer-motion";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { MotionConfig, AnimatePresence } from "framer-motion";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,6 +17,20 @@ import MyGreetings from "./pages/MyGreetings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+const AnimatedRoutes = () => {
+  const location = useLocation();
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<Index />} />
+        <Route path="/create" element={<CreateGreeting />} />
+        <Route path="/greetings" element={<MyGreetings />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
 
 const App = () => {
   const { isDark, hydrateTheme } = useThemeStore();
@@ -51,12 +65,7 @@ const App = () => {
               <StarField />
               <AppBar />
               <WelcomePopup />
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/create" element={<CreateGreeting />} />
-                <Route path="/greetings" element={<MyGreetings />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <AnimatedRoutes />
             </div>
           </BrowserRouter>
         </TooltipProvider>

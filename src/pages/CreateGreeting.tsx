@@ -141,9 +141,15 @@ const CreateGreeting = () => {
   const exportImage = useCallback(
     async (format: 'png' | 'jpeg') => {
       if (!cardComponentRef.current) return;
+      document.body.classList.add('exporting');
       try {
         const fn = format === 'png' ? toPng : toJpeg;
-        const dataUrl = await fn(cardComponentRef.current, { quality: 0.95, pixelRatio: 2 });
+        const dataUrl = await fn(cardComponentRef.current, { 
+          quality: 1.0, 
+          pixelRatio: 2,
+          skipFonts: false,
+          style: { transform: 'none' } 
+        });
         const link = document.createElement('a');
         link.download = `eid-greeting.${format}`;
         link.href = dataUrl;
@@ -153,6 +159,8 @@ const CreateGreeting = () => {
         toast.success(`Exported as ${format.toUpperCase()}`);
       } catch {
         toast.error('Export failed');
+      } finally {
+        document.body.classList.remove('exporting');
       }
     },
     []
@@ -165,7 +173,13 @@ const CreateGreeting = () => {
   });
 
   return (
-    <div className="min-h-screen">
+    <motion.div 
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ duration: 0.4 }}
+      className="min-h-screen"
+    >
       <main className="max-w-6xl mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-2 gap-10 items-start">
           {/* Left: Form */}
@@ -463,7 +477,7 @@ const CreateGreeting = () => {
 
         <Footer />
       </main>
-    </div>
+    </motion.div>
   );
 };
 

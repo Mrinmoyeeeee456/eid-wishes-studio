@@ -57,7 +57,13 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.98 }}
+      transition={{ duration: 0.4 }}
+      className="min-h-screen relative overflow-hidden"
+    >
       {/* Intro Bird Animation */}
       <div className="birds-container fixed inset-0 z-[100] pointer-events-none">
         {[...Array(15)].map((_, i) => (
@@ -329,7 +335,7 @@ const Index = () => {
 
         <Footer />
       </main>
-    </div>
+    </motion.div>
   );
 };
 

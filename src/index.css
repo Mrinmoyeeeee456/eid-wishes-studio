@@ -265,18 +265,29 @@
     transition-duration: 300ms;
   }
 
+  /* ── Exporting state (Fix html-to-image freezing) ── */
+  .exporting, .exporting * {
+    animation: none !important;
+    transition: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
   /* ── Print Format ── */
   @media print {
     body { background: none; color: black; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .print-only { display: block !important; }
     .no-print   { display: none  !important; }
-    @page { size: auto; margin: 10mm; }
+    @page { size: portrait; margin: 0; }
 
     #printable-eid-card {
-      width: 140mm !important;
-      height: 196mm !important; /* fixed 5:7 ratio */
-      max-width: none !important;
-      margin: 0 auto !important;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100% !important;
+      max-width: 100vw !important;
+      height: 100vh !important;
+      margin: 0 !important;
       padding: 0 !important;
       page-break-inside: avoid;
     }
@@ -285,6 +296,8 @@
        width: 100% !important;
        height: 100% !important;
        aspect-ratio: auto !important;
+       border: none !important;
+       box-shadow: none !important;
     }
 
     /* Disable backdrop blur in print as it can render gray/opaque on some webkit engines */
