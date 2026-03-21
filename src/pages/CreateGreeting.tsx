@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Save, Eye, Sparkles, ImagePlus } from 'lucide-react';
 import { toast } from 'sonner';
-import { toPng, toJpeg } from 'html-to-image';
+import html2canvas from 'html2canvas';
 import { useReactToPrint } from 'react-to-print';
 import Tippy from '@tippyjs/react';
 import EidCard from '@/components/EidCard';
@@ -133,8 +133,8 @@ const CreateGreeting = () => {
       const all = await loadGreetings();
       await saveGreetings([greeting, ...all]);
       toast.success('Greeting saved! 🌙');
-    } catch (err: any) {
-      toast.error(err.message || 'Storage full! Please delete some old greetings.');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Storage full! Please delete some old greetings.');
     }
   }, [recipientName, senderName, message, sizeKey, frameTheme, eidType, customBgImage]);
 
@@ -143,22 +143,28 @@ const CreateGreeting = () => {
       if (!cardComponentRef.current) return;
       document.body.classList.add('exporting');
       try {
-        const fn = format === 'png' ? toPng : toJpeg;
-        const dataUrl = await fn(cardComponentRef.current, { 
-          quality: 1.0, 
-          pixelRatio: 2,
-          skipFonts: false,
-          style: { transform: 'none' } 
+        const canvas = await html2canvas(cardComponentRef.current, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: null,
+          logging: false
         });
-        const link = document.createElement('a');
-        link.download = `eid-greeting.${format}`;
-        link.href = dataUrl;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        toast.success(`Exported as ${format.toUpperCase()}`);
-      } catch {
+        
+        canvas.toBlob((blob) => {
+          if (!blob) throw new Error('Blob creation failed');
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.download = `eid-greeting.${format}`;
+          link.href = url;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          toast.success(`Exported as ${format.toUpperCase()}`);
+        }, `image/${format}`, 1.0);
+      } catch (err) {
         toast.error('Export failed');
+        console.error(err);
       } finally {
         document.body.classList.remove('exporting');
       }

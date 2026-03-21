@@ -121,12 +121,25 @@
 }
 
 @layer utilities {
+  /* ── Hardware Acceleration for Mobile ── */
+  .card-hardware {
+    transform: translateZ(0);
+    will-change: transform, opacity;
+  }
+
   /* ── Glassmorphism ── */
   .glass-card {
     background: hsl(var(--card-glass));
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  @media (min-width: 768px) {
+    .glass-card {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
   }
 
   .glass-button {
@@ -281,23 +294,26 @@
     @page { size: portrait; margin: 0; }
 
     #printable-eid-card {
-      position: absolute;
-      top: 0;
-      left: 0;
+      position: relative !important;
       width: 100% !important;
-      max-width: 100vw !important;
-      height: 100vh !important;
-      margin: 0 !important;
+      max-width: 100% !important;
+      height: auto !important;
+      margin: 0 auto !important;
       padding: 0 !important;
       page-break-inside: avoid;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     
     #printable-eid-card > div {
        width: 100% !important;
-       height: 100% !important;
-       aspect-ratio: auto !important;
+       max-width: 90vw !important;
+       height: auto !important;
+       aspect-ratio: 5 / 7 !important;
        border: none !important;
        box-shadow: none !important;
+       margin: 0 auto;
     }
 
     /* Disable backdrop blur in print as it can render gray/opaque on some webkit engines */

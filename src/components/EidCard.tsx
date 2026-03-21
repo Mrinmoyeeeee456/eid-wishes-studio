@@ -28,7 +28,7 @@ const EidCard = forwardRef<HTMLDivElement, EidCardProps>(
     return (
       <div ref={ref} id="printable-eid-card" className={`${widthClass} w-full mx-auto p-2 bg-transparent print:p-0 print:m-0`}>
         <div 
-          className={`relative overflow-hidden rounded-2xl border-4 ${theme.colors.border} text-center shadow-xl flex flex-col glass-card glass-pulse`}
+          className={`relative overflow-hidden rounded-2xl border-4 ${theme.colors.border} text-center shadow-xl flex flex-col glass-card glass-pulse card-hardware`}
           style={{
             backgroundImage: bgImageUrl ? `url(${bgImageUrl})` : undefined,
             backgroundSize: 'cover',
@@ -36,8 +36,8 @@ const EidCard = forwardRef<HTMLDivElement, EidCardProps>(
             aspectRatio: '5 / 7',
           }}
         >
-          {/* Inner Layer — SOLID background for readability, NO heavy blur */}
-          <div className={`flex flex-col gap-6 p-6 md:p-8 w-full h-full ${hasBgImage ? 'bg-white/90 dark:bg-black/80' : theme.colors.bg}`}>
+          {/* Inner Layer — Slightly transparent for custom bg, readable solid background logic */}
+          <div className={`flex flex-col gap-6 p-6 md:p-8 w-full h-full ${hasBgImage ? 'bg-white/20 dark:bg-black/30 backdrop-blur-[2px]' : theme.colors.bg}`}>
             {/* Top Decorative Header */}
             <div className="flex items-center justify-between text-2xl">
               <span className={`opacity-70 ${theme.colors.text}`}>✧</span>

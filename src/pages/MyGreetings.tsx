@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Share2, PenLine } from 'lucide-react';
 import { toast } from 'sonner';
-import { toPng, toJpeg } from 'html-to-image';
+import html2canvas from 'html2canvas';
 import EidCard from '@/components/EidCard';
 import Footer from '@/components/Footer';
 import { SavedGreeting, loadGreetings, saveGreetings, deleteGreetingFromDb } from '@/lib/greetings';
+import { CharacterTheme } from '@/lib/frames';
 
 const MyGreetings = () => {
   const [greetings, setGreetings] = useState<SavedGreeting[]>([]);
@@ -48,7 +49,17 @@ const MyGreetings = () => {
       } catch { /* cancelled */ }
     } else {
       await navigator.clipboard.writeText(text);
-      toast.success('Copied to clipboard!');
+      if (dataUrl) {
+        const link = document.createElement('a');
+        link.download = `eid-greeting-${g.id}.png`;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast.success('Copied text and downloaded image! 💌');
+      } else {
+        toast.success('Copied to clipboard!');
+      }
     }
   }, []);
 
@@ -118,22 +129,28 @@ const GreetingItem = ({ greeting, onDelete, onShare, onEdit }: GreetingItemProps
       if (!cardRef.current) return;
       document.body.classList.add('exporting');
       try {
-        const fn = format === 'png' ? toPng : toJpeg;
-        const dataUrl = await fn(cardRef.current, { 
-          quality: 1.0, 
-          pixelRatio: 2,
-          skipFonts: false,
-          style: { transform: 'none' }
+        const canvas = await html2canvas(cardRef.current, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: null,
+          logging: false
         });
-        const link = document.createElement('a');
-        link.download = `eid-greeting.${format}`;
-        link.href = dataUrl;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        toast.success(`Exported as ${format.toUpperCase()}`);
-      } catch {
+        
+        canvas.toBlob((blob) => {
+          if (!blob) throw new Error('Blob creation failed');
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.download = `eid-greeting.${format}`;
+          link.href = url;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          toast.success(`Exported as ${format.toUpperCase()}`);
+        }, `image/${format}`, 1.0);
+      } catch (err) {
         toast.error('Export failed');
+        console.error(err);
       } finally {
         document.body.classList.remove('exporting');
       }
@@ -156,7 +173,7 @@ const GreetingItem = ({ greeting, onDelete, onShare, onEdit }: GreetingItemProps
             senderName={greeting.senderName}
             message={greeting.message}
             size={greeting.cardSize || 'medium'}
-            frameId={greeting.frameId as any}
+            frameId={greeting.frameId as CharacterTheme}
             eidType={greeting.eidType}
             customBg={greeting.customBg}
           />
@@ -165,20 +182,26 @@ const GreetingItem = ({ greeting, onDelete, onShare, onEdit }: GreetingItemProps
       {/* Actions */}
       <div className="flex gap-2">
         <button
-          onClick={async () => {
+           onClick={async () => {
              if (!cardRef.current) { onShare(greeting); return; }
              toast.loading('Generating image for share...', { id: 'share' });
              document.body.classList.add('exporting');
              try {
-               const dataUrl = await toPng(cardRef.current, { 
-                 quality: 1.0, 
-                 pixelRatio: 2, 
-                 skipFonts: false,
-                 style: { transform: 'none' } 
+               const canvas = await html2canvas(cardRef.current, {
+                 scale: 2,
+                 useCORS: true,
+                 backgroundColor: null,
+                 logging: false
                });
-               toast.dismiss('share');
-               onShare(greeting, dataUrl);
-             } catch {
+               
+               canvas.toBlob((blob) => {
+                 if (!blob) throw new Error('Blob creation failed');
+                 const url = URL.createObjectURL(blob);
+                 toast.dismiss('share');
+                 onShare(greeting, url); // url works exactly like dataUrl for fetching the blob later
+               }, 'image/png');
+             } catch (err) {
+               console.error(err);
                toast.dismiss('share');
                onShare(greeting);
              } finally {

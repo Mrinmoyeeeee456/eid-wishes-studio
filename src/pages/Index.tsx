@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PenLine, Sparkles, FolderOpen, Bird } from 'lucide-react';
-import gsap from 'gsap';
 import Footer from '@/components/Footer';
 import { useThemeStore } from '@/store/themeStore';
 import { HangingLanterns } from '@/components/Lanterns';
@@ -34,26 +33,8 @@ const Index = () => {
   ];
 
   useEffect(() => {
-    const tl = gsap.timeline();
-    // Scatter the birds randomly from left/bottom to top/right
-    gsap.utils.toArray('.bird-anim').forEach((bird: any, i) => {
-      tl.fromTo(bird, 
-        { x: -100, y: window.innerHeight + 100, opacity: 0, scale: 0.5 },
-        { 
-          x: window.innerWidth + 100, 
-          y: -100 - (Math.random() * 200), 
-          opacity: 1, 
-          scale: Math.random() * 1.5 + 0.8,
-          duration: Math.random() * 2 + 2, 
-          ease: 'power2.out',
-          delay: Math.random() * 0.5
-        },
-        0
-      );
-    });
-    
-    tl.to('.birds-container', { autoAlpha: 0, duration: 0.5 }, '+=1')
-      .set('.birds-container', { display: 'none' });
+    // GSAP removed to optimize mobile performance and prevent main-thread freezing.
+    // Bird animations handled cleanly by Framer Motion.
   }, []);
 
   return (
@@ -64,14 +45,31 @@ const Index = () => {
       transition={{ duration: 0.4 }}
       className="min-h-screen relative overflow-hidden"
     >
-      {/* Intro Bird Animation */}
-      <div className="birds-container fixed inset-0 z-[100] pointer-events-none">
-        {[...Array(15)].map((_, i) => (
-          <div key={i} className="bird-anim absolute text-[var(--primary-festive)] drop-shadow-md">
-            <Bird size={Math.random() * 20 + 20} className="animate-pulse" />
-          </div>
-        ))}
-      </div>
+      {/* Intro Bird Animation (Optimized for Mobile) */}
+      <AnimatePresence>
+        <div className="fixed inset-0 z-[100] pointer-events-none overflow-hidden">
+          {[...Array(5)].map((_, i) => (
+            <motion.div 
+              key={i} 
+              className="absolute text-[var(--primary-festive)] drop-shadow-md"
+              initial={{ x: -100, y: '100vh', opacity: 0, scale: 0.5 }}
+              animate={{ 
+                x: '110vw', 
+                y: -100, 
+                opacity: [0, 1, 1, 0], 
+                scale: Math.random() * 1.2 + 0.8 
+              }}
+              transition={{ 
+                duration: Math.random() * 2 + 3, 
+                ease: 'easeOut', 
+                delay: Math.random() * 0.5 
+              }}
+            >
+              <Bird size={Math.random() * 15 + 20} />
+            </motion.div>
+          ))}
+        </div>
+      </AnimatePresence>
 
       {/* ── Hero ── */}
       <main className="relative z-10 max-w-6xl mx-auto flex flex-col items-center justify-center pt-8 px-4 pb-8">
